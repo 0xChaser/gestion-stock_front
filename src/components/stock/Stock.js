@@ -1,6 +1,6 @@
 import React from 'react';
 
-function StockList() {
+function Stock() {
   return (
     <div className="container mt-5">
       <h2>StockList</h2>
@@ -9,4 +9,4 @@ function StockList() {
   );
 }
 
-export default StockList;
+export default Stock;
