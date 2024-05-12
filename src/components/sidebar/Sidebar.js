@@ -1,58 +1,69 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Drawer, List, ListItem, ListItemButton, ListItemText, Switch, FormControlLabel, Box, Divider } from '@mui/material';
+import { useTheme } from '../../themeContext';
+import logo from '../img/logo_enedis.png'; 
 
 function Sidebar() {
+  const { darkMode, toggleTheme } = useTheme();
+
   return (
-    <div style={styles.sidebar}>
-      <nav className="navbar navbar-expand-lg navbar-light">
-        <div className="container-fluid">
-          <ul className="navbar-nav flex-column">
-            <li className="nav-item" style={styles.navItem}>
-              <Link className="nav-link active" aria-current="page" to="/" style={styles.navLink}>Accueil</Link>
-            </li>
-            <li className="nav-item" style={styles.navItem}>
-              <Link className="nav-link" to="/stock" style={styles.navLink}>Liste du Stock</Link>
-            </li>
-            <li className="nav-item" style={styles.navItem}>
-              <Link className="nav-link" to="/login" style={styles.navLink}>Log In</Link>
-            </li>
-            <li className="nav-item" style={styles.navItem}>
-              <Link className="nav-link" to="/users" style={styles.navLink}>Liste des utilisateurs</Link>
-            </li>
-            <li className="nav-item" style={styles.navItem}>
-              <Link className="nav-link" to="/category" style={styles.navLink}>Liste des catégories</Link>
-            </li>
-            <li className="nav-item" style={styles.navItem}>
-              <Link className="nav-link" to="/products" style={styles.navLink}>Liste des produits</Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </div>
+    <Drawer
+      variant="permanent"
+      sx={{
+        width: 240,
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        [`& .MuiDrawer-paper`]: { width: 240, boxSizing: 'border-box', backgroundColor: darkMode ? '#333' : '#F2F2F2', color: darkMode ? '#fff' : '#1423DC' },
+      }}
+    >
+      <Box sx={{ width: '100%', p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <img src={logo} alt="Sidebar Logo" style={{ maxHeight: '100px', maxWidth: '100%' }} />
+      </Box>
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/">
+            <ListItemText primary="Accueil" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/stock">
+            <ListItemText primary="Liste du Stock" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/login">
+            <ListItemText primary="Log In" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/users">
+            <ListItemText primary="Liste des utilisateurs" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/category">
+            <ListItemText primary="Liste des catégories" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton component={Link} to="/products">
+            <ListItemText primary="Liste des produits" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+      <Divider />
+      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
+        <FormControlLabel
+          control={<Switch checked={darkMode} onChange={toggleTheme} />}
+          label="Mode Sombre"
+          sx={{ display: 'flex', justifyContent: 'center' }}
+        />
+      </Box>
+    </Drawer>
   );
 }
-
-const styles = {
-  sidebar: {
-    position: 'fixed',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    width: '200px',
-    overflow: 'auto',
-    backgroundColor: '#F2F2F2',
-    padding: '10px 0',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.5)'
-  },
-  navItem:{
-    display: 'inline-block'
-  },
-  navLink: {
-    color: '#1423DC',
-    padding: '10px 20px', 
-    display: 'block'
-  }
-};
 
 export default Sidebar;

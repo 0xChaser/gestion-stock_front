@@ -1,121 +1,89 @@
 import React, { useState, useEffect } from 'react';
+import { CssBaseline, ThemeProvider, createTheme, Button, Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import apiConfig from '@/api/apiConfig';
 import CategoryModal from '@/components/modals/addCategoryModal';
+import { useTheme } from '../../themeContext';
 
 function CategoryList() {
+  const [categories, setCategories] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const { darkMode } = useTheme();
 
-  const [category, setCategory] = useState([]);
-  const [ModalIsOpen, setModalIsOpen] = useState(false);
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? 'dark' : 'light',
+      primary: { main: '#232876' },
+      background: { paper: darkMode ? '#333' : '#F2F2F2', default: darkMode ? '#121212' : '#fff' },
+      text: { primary: darkMode ? '#fff' : '#000' },
+    },
+  });
 
   useEffect(() => {
-    async function fetchCategory() {
+    async function fetchCategories() {
       try {
         const response = await apiConfig.get('/category/');
-        console.log('Réponse API:', response.data);
-        setCategory(response.data);
+        setCategories(response.data);
       } catch (error) {
         console.error('Problème de récupération', error);
       }
     }
-    fetchCategory();
+    fetchCategories();
   }, []);
 
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
 
-  const addCategory = async (category) =>{
-    try{
-       const response = await apiConfig.post('/category/', category)
-       setCategory(prevCategory => [...prevCategory, response.data]);
-       closeModal();
-       console.log('Catégorie ajoutée avec succès', response.data);
-       return response.data;
-    } catch(error){
-      console.error('Erreur lors de l\'ajout de la catégorie')
-      throw error
+  const addCategory = async (category) => {
+    try {
+      const response = await apiConfig.post('/category/', category);
+      setCategories(prevCategories => [...prevCategories, response.data]);
+      closeModal();
+      console.log('Catégorie ajoutée avec succès', response.data);
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de la catégorie');
+      throw error;
     }
-  }
-
-  const [hover, setHover] = useState(false);
-
-  const buttonStyle = {
-    padding: '10px',
-    marginTop: '30px',
-    borderRadius: '15px',
-    border: 'none',
-    backgroundColor: hover ? '#96CD32' : '#1423DC',
-    color: 'white',
-    cursor: 'pointer',
-    width: '250px',
-    fontSize: '18px'
-}
+  };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Liste des catégories</h1>
-      
-      <button
-      type="submit"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onClick={openModal}
-      style={buttonStyle}
-      >
-      Ajouter une catégorie
-      </button>
-      <CategoryModal isOpen={ModalIsOpen} onClose={closeModal} onAddCategory={addCategory} />
-
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.th}>Nom de la catégorie</th>
-          </tr>
-        </thead>
-        <tbody>
-          {category.map((category, index) => (
-            <tr key={index}>
-              <td style={styles.td}>{category.name}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{
+        padding: 3,
+        margin: 0,
+        width: '100%',
+        height: '100%',
+        maxWidth: 'none',
+        backgroundColor: 'background.paper',
+        borderRadius: 0,
+        boxShadow: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        <h1 style={{ color: darkMode ? '#96CD32' : '#232876', textAlign: 'center', fontSize: '2.5rem', marginTop: '1.8%', textDecoration: 'underline' }}>Liste des catégories</h1>
+        <Button variant="contained" onClick={openModal} sx={{ color: '#fff', bgcolor: '#1423DC', marginBottom: 2, marginTop: '1.8%', borderRadius: '15px' ,'&:hover': { bgcolor: '#96CD32'} }}>
+          Ajouter une catégorie
+        </Button>
+        <CategoryModal isOpen={modalIsOpen} onClose={closeModal} onAddCategory={addCategory} />
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold', border: '1px solid #FFFFFF' }}>Nom de la catégorie</TableCell>
+              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold', border: '1px solid #FFFFFF' }}>Action</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {categories.map((category, index) => (
+              <TableRow key={index}>
+                <TableCell sx={{ border: 1, borderColor: 'grey.300', textAlign: 'center', padding: 2 }}>{category.name}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Box>
+    </ThemeProvider>
   );
 }
 
-  const styles = {
-    container: {
-      backgroundColor: 'white',
-      display: 'flex',
-      alignItems: 'center',
-      flexDirection: 'column',
-      fontFamily: 'Arial, sans-serif',
-    },
-    title: {
-      color: '#232876',
-      textAlign: 'center',
-      marginTop: '1.8%',
-      fontSize: '60px',
-    },
-    table: {
-      borderCollapse: 'collapse',
-      margin: '20px 0',
-      fontSize: '20px',
-    },
-    th: {
-      border: '0.3px solid #cecece',
-      backgroundColor: '#232876',
-      color: 'white',
-      textAlign: 'center',
-      padding: '15px',
-      fontSize: '25px',
-      fontWeight: 'bold',
-    },
-    td: {
-      border: '1px solid #cecece',
-      textAlign: 'center',
-      padding: '15px',
-      verticalAlign: 'middle',
-    }
-  };
 export default CategoryList;
