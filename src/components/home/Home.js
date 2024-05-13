@@ -47,8 +47,8 @@ function HomePage() {
         flexDirection: { xs: 'column', sm: 'row' }
       }}>
         <img src={StockImage} alt="Stock Management" style={{ width: '100%', maxWidth: '600px', height: 'auto', margin: '20px' }} />
-        <Typography paragraph sx={{ maxWidth: '600px', textAlign: 'center', fontSize: '18px' }}>
-          Pour palier a la disparition et la perte du matériel informatique des agents, notre innovation "E-Stock" facilite le suivi pour les managers
+        <Typography paragraph sx={{ maxWidth: '600px', textAlign: 'left', fontSize: '18px' }}>
+          Pour palier a la disparition et la perte du matériel informatique des agents, notre innovation "E-Stock" facilite le suivi et simplifie l'accès à l'inventaire.
         </Typography>
       </Box>
       <Box sx={{
