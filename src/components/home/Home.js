@@ -59,10 +59,10 @@ function HomePage() {
         width: '100%',
         marginTop: '20px'
       }}>
-        <Button variant="contained" component={Link} to="/stock" sx={{width: '80%', maxWidth: '300px', bgcolor:'#1423DC', padding:'15px', color: '#FFFFFF','&:hover': { bgcolor: '#96CD32'} }}>
+        <Button variant="contained" component={Link} to="/stock" sx={{width: 'auto', maxWidth: '300px', bgcolor:'#1423DC', padding:'10px', color: '#FFFFFF','&:hover': { bgcolor: '#96CD32'} }}>
           Voir le stock
         </Button>
-        <Button variant="contained" component={Link} to="/login" sx={{ width: '100%', maxWidth: '400px', bgcolor:'#1423DC', padding:'15px', color: '#FFFFFF','&:hover': { bgcolor: '#96CD32'} }}>
+        <Button variant="contained" component={Link} to="/login" sx={{ width: 'auto', maxWidth: '400px', bgcolor:'#1423DC', padding:'10px', color: '#FFFFFF','&:hover': { bgcolor: '#96CD32'} }}>
           Se connecter en tant qu'administrateur
         </Button>
       </Box>
