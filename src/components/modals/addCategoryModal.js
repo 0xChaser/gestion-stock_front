@@ -48,7 +48,7 @@ function UserModal({ isOpen, onClose, onAddUser}){
             content: styles.modalContentStyle,
         }}
         >
-            <h1 style={styles.titleStyle}> Ajouter un utilisateur</h1>
+            <h1 style={styles.titleStyle}> Ajouter une catégorie</h1>
             <form onSubmit={handleSubmit} style={styles.formStyle}>
                 <label>Nom de la catégorie</label>
                 <input

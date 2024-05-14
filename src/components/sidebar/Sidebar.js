@@ -1,21 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Drawer, List, ListItem, ListItemButton, ListItemText, Switch, FormControlLabel, Box, Divider } from '@mui/material';
+import { Drawer, List, ListItem, ListItemButton, ListItemText, Switch, FormControlLabel, Box, Divider, IconButton, AppBar, Toolbar, Typography, CssBaseline } from '@mui/material';
+import { Menu as MenuIcon } from '@mui/icons-material';
 import { useTheme } from '../../themeContext';
-import logo from '../img/logo_enedis.png'; 
+import { useMediaQuery } from '@mui/material';
+import logo from '../img/logo_enedis.png';
 
 function Sidebar() {
   const { darkMode, toggleTheme } = useTheme();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width:600px)');
 
-  return (
-    <Drawer
-      variant="permanent"
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const drawerWidth = 240;
+  const backgroundColor = darkMode ? '#333' : '#F2F2F2';
+  const color = darkMode ? '#fff' : '#1423DC';
+
+  const drawer = (
+    <Box
       sx={{
-        width: 240,
+        width: drawerWidth,
         flexShrink: 0,
         display: 'flex',
         flexDirection: 'column',
-        [`& .MuiDrawer-paper`]: { width: 240, boxSizing: 'border-box', backgroundColor: darkMode ? '#333' : '#F2F2F2', color: darkMode ? '#fff' : '#1423DC' },
+        height: '100%',
+        position: 'relative',
+        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', backgroundColor, color, height: '100%', position: 'relative' },
       }}
     >
       <Box sx={{ width: '100%', p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -57,12 +70,64 @@ function Sidebar() {
       <Divider />
       <Box sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
         <FormControlLabel
-          control={<Switch checked={darkMode} onChange={toggleTheme} />}
-          label="Mode Sombre"
+          control={
+            <Switch
+              checked={darkMode}
+              onChange={toggleTheme}
+              inputProps={{ 'aria-label': 'controlled' }}
+            />
+          }
+          label="Changer le thème"
           sx={{ display: 'flex', justifyContent: 'center' }}
         />
       </Box>
-    </Drawer>
+    </Box>
+  );
+
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      {isMobile && (
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 0.5, width: '130px', backgroundColor, color, left: 0 }}>
+          <Toolbar
+            sx={{
+              justifyContent: 'flex-start',
+              padding: '0 16px',
+              minHeight: mobileOpen ? 56 : 48,
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleDrawerToggle}>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                sx={{ mr: 2 }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap component="div" sx={{ color }}>
+                Menu
+              </Typography>
+            </Box>
+          </Toolbar>
+        </AppBar>
+      )}
+      <Drawer
+        variant={isMobile ? "temporary" : "permanent"}
+        open={isMobile ? mobileOpen : true}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true,
+        }}
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', backgroundColor, color },
+        }}
+      >
+        {drawer}
+      </Drawer>
+    </Box>
   );
 }
 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { CssBaseline, ThemeProvider, createTheme, Button, Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { CssBaseline, ThemeProvider, createTheme, Button, Box, Card, Typography, Stack } from '@mui/material';
 import apiConfig from '@/api/apiConfig';
-import CategoryModal from '@/components/modals/addProductModal';
+import ProductModal from '@/components/modals/addProductModal';
 import { useTheme } from '../../themeContext';
 
-function CategoryList() {
+function ProductList() {
   const [products, setProducts] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const { darkMode } = useTheme();
@@ -38,11 +38,15 @@ function CategoryList() {
       const response = await apiConfig.post('/products/', product);
       setProducts(prevProducts => [...prevProducts, response.data]);
       closeModal();
-      console.log('Catégorie ajoutée avec succès', response.data);
+      console.log('Produit ajouté avec succès', response.data);
     } catch (error) {
-      console.error('Erreur lors de l\'ajout de la catégorie');
+      console.error('Erreur lors de l\'ajout du produit', error);
       throw error;
     }
+  };
+
+  const getRandomColor = () => {
+    return `hsla(${Math.random() * 360}, 100%, 85%, 0.6)`;
   };
 
   return (
@@ -50,45 +54,45 @@ function CategoryList() {
       <CssBaseline />
       <Box sx={{
         padding: 3,
-        margin: 0,
-        width: '100%',
-        height: '100%',
-        maxWidth: 'none',
-        backgroundColor: 'background.paper',
-        borderRadius: 0,
-        boxShadow: 3,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        gap: 2,
+        width: '100%',
+        minHeight: '100vh'
       }}>
-        <h1 style={{ color: darkMode ? '#96CD32' : '#232876', textAlign: 'center', fontSize: '2.5rem', marginTop: '1.8%', textDecoration: 'underline' }}>Liste des produits</h1>
-        <Button variant="contained" onClick={openModal} sx={{ color: '#fff', bgcolor: '#1423DC', marginBottom: 2, marginTop: '1.8%', borderRadius: '15px','&:hover': { bgcolor: '#96CD32'}  }}>
+        <Typography variant="h3" style={{ color: darkMode ? '#96CD32' : '#232876', textAlign: 'center', marginTop: 20, textDecoration: 'underline' }}>
+          Liste des produits
+        </Typography>
+        <Button variant="contained" onClick={openModal} sx={{ color: '#fff', bgcolor: '#1423DC', marginBottom: 2, marginTop: 2, borderRadius: '15px','&:hover': { bgcolor: '#96CD32'} }}>
           Ajouter un produit
         </Button>
-        <CategoryModal isOpen={modalIsOpen} onClose={closeModal} onAddProduct={addProduct} />
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold', border: '1px solid #FFFFFF' }}>Nom du produit</TableCell>
-              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold', border: '1px solid #FFFFFF' }}>Prix du produit</TableCell>
-              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold', border: '1px solid #FFFFFF' }}>Catégorie du Produit</TableCell>
-              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold', border: '1px solid #FFFFFF' }}>Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map((product, index) => (
-              <TableRow key={index}>
-                <TableCell sx={{ border: 1, borderColor: 'grey.300', textAlign: 'center', padding: 2 }}>{product.name}</TableCell>
-                <TableCell sx={{ border: 1, borderColor: 'grey.300', textAlign: 'center', padding: 2 }}>{product.price}</TableCell>
-                <TableCell sx={{ border: 1, borderColor: 'grey.300', textAlign: 'center', padding: 2 }}>{product.category}</TableCell>
-                <TableCell sx={{ border: 1, borderColor: 'grey.300', textAlign: 'center', padding: 2 }}>{product.name}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <ProductModal isOpen={modalIsOpen} onClose={closeModal} onAddProduct={addProduct} />
+        {products.map((product, index) => (
+          <Card key={index} sx={{
+            width: '90%',
+            maxWidth: 400,
+            bgcolor: getRandomColor(),
+            padding: 2,
+            borderRadius: 2,
+            boxShadow: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1
+          }}>
+            <Typography variant="h6" sx={{ color: '#000', textAlign: 'center' }}>{product.name}</Typography>
+            <Typography variant="body2" sx={{ color: '#000', textAlign: 'center' }}>Prix: {product.price}</Typography>
+            <Typography variant="body2" sx={{ color: '#000', textAlign: 'center' }}>Catégorie: {product.category}</Typography>
+            <Stack direction="row" spacing={1} justifyContent="center">
+              <Button variant="outlined" onClick={() => console.log('Edit', product.id)}>Modifier</Button>
+              <Button variant="outlined" color="error" onClick={() => console.log('Delete', product.id)}>Supprimer</Button>
+            </Stack>
+          </Card>
+        ))}
       </Box>
     </ThemeProvider>
   );
 }
 
-export default CategoryList;
+export default ProductList;

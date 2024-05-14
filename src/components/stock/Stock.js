@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { CssBaseline, ThemeProvider, createTheme, Button, Table, TableBody, TableCell, TableHead, TableRow, Box } from '@mui/material';
+import { CssBaseline, ThemeProvider, createTheme, Button, Box, Card, Typography, Stack } from '@mui/material';
 import apiConfig from '@/api/apiConfig';
-import StockModal from '@/components/modals/addUserModal'; // Ensure this modal is created for adding stock items
+import StockModal from '@/components/modals/addUserModal';
 import { useTheme } from '../../themeContext';
 
 function StockList() {
   const [stocks, setStocks] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const { darkMode, toggleTheme } = useTheme();
+  const { darkMode } = useTheme();
 
   const theme = createTheme({
     palette: {
@@ -43,46 +43,63 @@ function StockList() {
     }
   };
 
+  const deleteStock = async (stockId) => {
+    try {
+      await apiConfig.delete(`/stock/${stockId}`);
+      setStocks(prevStocks => prevStocks.filter(stock => stock.id !== stockId));
+      console.log('Stock item deleted successfully');
+    } catch (error) {
+      console.error('Error deleting stock item', error);
+    }
+  };
+
+  const editStock = (stock) => {
+    console.log('Editing stock:', stock);
+  };
+
+  const getRandomColor = () => {
+    return `hsla(${Math.random() * 360}, 100%, 85%, 1)`;
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{
         padding: 3,
-        margin: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 2,
         width: '100%',
-        height: '100%',
-        maxWidth: 'none',
-        backgroundColor: 'background.paper',
-        borderRadius: 0,
-        boxShadow: 3,
+        minHeight: '100vh'
       }}>
-        <h1 style={{ color: darkMode ? '#96CD32' : '#232876', textAlign: 'center', fontSize: '2.5rem', marginTop: '1.8%', textDecoration: 'underline'}}>
+        <Typography variant="h3" style={{ color: darkMode ? '#96CD32' : '#232876', textAlign: 'center', marginTop: 20, textDecoration: 'underline' }}>
           Vue du Stock
-        </h1>
+        </Typography>
+        <Button variant="contained" onClick={openModal} sx={{ color: '#fff', bgcolor: '#1423DC', marginBottom: 2, marginTop: 2, borderRadius: '15px','&:hover': { bgcolor: '#96CD32'} }}>
+          Ajouter un stock
+        </Button>
         <StockModal isOpen={modalIsOpen} onClose={closeModal} onAddStock={addStock} />
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold' }}>Produit</TableCell>
-              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold' }}>Categorie</TableCell>
-              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold' }}>Quantité</TableCell>
-              <TableCell sx={{ backgroundColor: '#232876', color: 'white', textAlign: 'center', padding: 2, fontSize: '1.25rem', fontWeight: 'bold' }}>Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {stocks.map((stock, index) => (
-              <TableRow key={index}>
-                <TableCell sx={{ border: 1, borderColor: 'grey.300', textAlign: 'center', padding: 2 }}>{stock.name}</TableCell>
-                <TableCell sx={{ border: 1, borderColor: 'grey.300', textAlign: 'center', padding: 2 }}>{stock.category}</TableCell>
-                <TableCell sx={{ border: 1, borderColor: 'grey.300', textAlign: 'center', padding: 2 }}>{stock.quantity}</TableCell>
-                <TableCell sx={{ border: 1, borderColor: 'grey.300', textAlign: 'center', padding: 2 }}>
-                  <Button color="primary">Modifier</Button>
-                  <Button color="error">Supprimer</Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        {stocks.map((stock, index) => (
+          <Card key={index} sx={{
+            width: 300,
+            bgcolor: getRandomColor(),
+            padding: 2,
+            borderRadius: 3,
+            boxShadow: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}>
+            <Typography variant="h6" sx={{ color: '#fff', textAlign: 'center' }}>{stock.name}</Typography>
+            <Typography variant="body2" sx={{ color: '#fff', textAlign: 'center' }}>{stock.category}</Typography>
+            <Typography variant="body2" sx={{ color: '#fff', textAlign: 'center' }}>Quantité: {stock.quantity}</Typography>
+            <Stack direction="row" spacing={1} justifyContent="center">
+              <Button variant="outlined" onClick={() => editStock(stock)}>Modifier</Button>
+              <Button variant="outlined" color="error" onClick={() => deleteStock(stock.id)}>Supprimer</Button>
+            </Stack>
+          </Card>
+        ))}
       </Box>
     </ThemeProvider>
   );
