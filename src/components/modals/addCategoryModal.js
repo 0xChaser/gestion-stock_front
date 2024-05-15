@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 
 Modal.setAppElement("#root")
 
-function UserModal({ isOpen, onClose, onAddUser}){
+function UserModal({ isOpen, onClose, onAddCategory}){
     const [formData, setFormData] = useState({
         usename: '',
         isAdmin: false
@@ -22,7 +22,7 @@ function UserModal({ isOpen, onClose, onAddUser}){
 
     const handleSubmit = (event) =>{
         event.preventDefault();
-        onAddUser(formData);
+        onAddCategory(formData);
         onClose()
     };
 

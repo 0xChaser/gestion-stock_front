@@ -32,7 +32,7 @@ function CategoryList() {
 
   const addCategory = async (category) => {
     try {
-      const response = await apiConfig.post('/category/', category);
+      const response = await apiConfig.post('/category', category);
       setCategories(prevCategories => [...prevCategories, response.data]);
       closeModal();
       console.log('Catégorie ajoutée avec succès', response.data);
@@ -56,11 +56,6 @@ function CategoryList() {
     console.log('Modification de la catégorie:', category);
   };
 
-
-  const getRandomColor = () => {
-    return `hsla(${Math.random() * 360}, 100%, 75%, 1)`;
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -82,7 +77,7 @@ function CategoryList() {
         {categories.map((category, index) => (
           <Card key={index} sx={{
             width: 300,
-            bgcolor: getRandomColor(),
+            bgcolor: '#232876',
             padding: 2,
             borderRadius: 3,
             boxShadow: 3,
@@ -93,8 +88,8 @@ function CategoryList() {
             <Typography variant="h5" sx={{ color: '#fff', textAlign: 'center' }}>{category.name}</Typography>
             <Typography variant="body1" sx={{ color: '#fff', textAlign: 'center' }}>{category.date}</Typography>
             <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%', mt: 1 }}>
-              <Button variant="contained" color="secondary" onClick={() => editCategory(category)} sx={{ borderRadius: '15px' }}>Modifier</Button>
-              <Button variant="contained" color="error" onClick={() => deleteCategory(category.id)} sx={{ borderRadius: '15px' }}>Supprimer</Button>
+              <Button variant="contained" onClick={() => editCategory(category)} sx={{ borderRadius: '15px', bgcolor:'#96CD32' }}>Modifier</Button>
+              <Button variant="contained" color="error" onClick={() => deleteCategory(category.id)} sx={{ borderRadius: '15px',bgcolor:'red' }}>Supprimer</Button>
             </Box>
           </Card>
         ))}
