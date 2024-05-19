@@ -110,7 +110,7 @@ const AddProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onAddPr
             </Select>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <CustomButton text="Ajouter" disabled={false} />
+              <CustomButton text="Ajouter" disabled={false} type="submit" />
             </Box>
           </form>
         </ModalContent>

@@ -17,7 +17,7 @@ const CustomTitle: React.FC<CustomTitleProps> = ({ children }) => {
   });
 
   const StyledTypography = styled(Typography)(({ theme }) => ({
-    color: darkMode ? '#96CD32' : '#1423DC',
+    color: darkMode ? '#96CD32' : '#232876',
     fontWeight: 'bold',
     fontSize: '3rem',
     textAlign: 'center',

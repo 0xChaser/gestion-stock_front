@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CssBaseline, ThemeProvider, createTheme, Button, Box, Grid, Typography, styled, Card, CardContent } from '@mui/material';
+import { CssBaseline, ThemeProvider, createTheme, Box, Grid, Typography, styled, Card, CardContent } from '@mui/material';
 import apiConfig from '../../api/apiConfig';
 import AddProductModal from '../Modals/addProductModal';
 import EditProductModal from '../Modals/editProductModal';
@@ -9,6 +9,8 @@ import { useTheme } from '../../contexts/themeContext';
 import CustomButton from '@/components/buttons/CustomButton';
 import CustomDeleteButton from '@/components/buttons/CustomDeleteButton';
 import CustomTitle from '@/components/titles/CustomTitle';
+import ToggleViewButton from '@/components/buttons/ToggleViewButton';
+import CustomTable from '@/components/tables/CustomTable';
 
 interface Product {
   id: string;
@@ -25,6 +27,7 @@ const ProductList: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [view, setView] = useState('module');
   const { darkMode } = useTheme();
 
   const theme = createTheme({
@@ -94,10 +97,8 @@ const ProductList: React.FC = () => {
       closeModal();
       setSnackbarMessage('Produit ajouté avec succès !');
       setSnackbarOpen(true);
-      console.log('Produit ajouté avec succès', response.data);
     } catch (error) {
       console.error('Erreur lors de l\'ajout du produit', error);
-      throw error;
     }
   };
 
@@ -108,10 +109,8 @@ const ProductList: React.FC = () => {
       closeEditModal();
       setSnackbarMessage('Produit modifié avec succès !');
       setSnackbarOpen(true);
-      console.log('Produit modifié avec succès', response.data);
     } catch (error) {
       console.error('Erreur lors de la modification du produit', error);
-      throw error;
     }
   };
 
@@ -123,11 +122,22 @@ const ProductList: React.FC = () => {
       closeDeleteModal();
       setSnackbarMessage('Produit supprimé avec succès !');
       setSnackbarOpen(true);
-      console.log('Produit supprimé avec succès');
     } catch (error) {
       console.error('Erreur lors de la suppression du produit', error);
     }
   };
+
+  const handleViewChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
+    if (nextView !== null) {
+      setView(nextView);
+    }
+  };
+
+  const columns = [
+    { id: 'name', label: 'Nom du Produit' },
+    { id: 'price', label: 'Prix (en €)', align: 'right' },
+    { id: 'categories', label: 'Catégories', align: 'right', format: (value: any) => value.map((cat: any) => cat.name).join(', ') || 'Pas de catégorie' }
+  ];
 
   return (
     <ThemeProvider theme={theme}>
@@ -142,6 +152,7 @@ const ProductList: React.FC = () => {
       }}>
         <CustomTitle>Liste des Produits</CustomTitle>
         <CustomButton text="Ajouter des Produits" onClick={openModal} disabled={false} />
+        <ToggleViewButton view={view} handleChange={handleViewChange} />
 
         <AddProductModal isOpen={modalIsOpen} onClose={closeModal} onAddProduct={addProduct} />
         {selectedProduct && (
@@ -158,31 +169,44 @@ const ProductList: React.FC = () => {
           onConfirm={deleteProduct}
           productName={selectedProduct?.name || ''}
         />
-        <Grid container spacing={3} mt={2}>
-          {products.map((product) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
-              <StyledCard>
-                <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="h6" component="div">
-                      {product.name}
+
+        {view === 'module' ? (
+          <Grid container spacing={3}>
+            {products.map((product) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+                <StyledCard>
+                  <CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="h6" component="div">
+                        {product.name}
+                      </Typography>
+                      <Typography variant="h6" component="div">
+                        {product.price} €
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ mt: 2 }}>
+                      Catégorie(s): {product.categories.map(cat => cat.name).join(', ') || 'Pas de catégorie'}
                     </Typography>
-                    <Typography variant="h6" component="div">
-                      {product.price} €
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" sx={{ mt: 2 }}>
-                    Catégorie(s): {product.categories.map(cat => cat.name).join(', ') || 'Pas de catégorie'}
-                  </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 3 }}>
-                    <CustomButton text="Modifier" onClick={() => openEditModal(product)} disabled={false} />
-                    <CustomDeleteButton text="Supprimer" onClick={() => openDeleteModal(product)} disabled={false} />
-                  </Box>
-                </CardContent>
-              </StyledCard>
-            </Grid>
-          ))}
-        </Grid>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 3 }}>
+                      <CustomButton text="Modifier" onClick={() => openEditModal(product)} disabled={false} />
+                      <CustomDeleteButton text="Supprimer" onClick={() => openDeleteModal(product)} disabled={false} />
+                    </Box>
+                  </CardContent>
+                </StyledCard>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Box sx={{ width: '100%' }}>
+            <CustomTable
+              columns={columns}
+              data={products}
+              onEdit={openEditModal}
+              onDelete={openDeleteModal}
+            />
+          </Box>
+        )}
+
         <CustomSnackbar
           open={snackbarOpen}
           message={snackbarMessage}

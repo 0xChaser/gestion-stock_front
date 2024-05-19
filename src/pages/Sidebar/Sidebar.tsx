@@ -16,20 +16,22 @@ import {
   Toolbar,
   Typography,
   CssBaseline,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import {
   ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
   Home as HomeIcon,
   Inventory as InventoryIcon,
   Login as LoginIcon,
   People as PeopleIcon,
   Category as CategoryIcon,
   ShoppingBag as ShoppingBagIcon,
+  Menu as MenuIcon,
 } from '@mui/icons-material';
 import { useTheme } from '../../contexts/themeContext';
-import logo from '../../assets/images/logo_Estock.png'; // Correction du chemin
-import { styled, Theme } from '@mui/material/styles'; // Notez le changement de '@mui/system' à '@mui/material/styles'
+import logo from '../../assets/images/logo_Estock.png';
+import { styled } from '@mui/material/styles';
 
 const drawerWidth = 240;
 
@@ -59,13 +61,13 @@ interface DrawerStyledProps {
   open?: boolean;
 }
 
-const DrawerStyled = styled(Drawer, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})<DrawerStyledProps>(({ theme, open }) => ({
+const DrawerStyled = styled(Drawer)<DrawerStyledProps>(({ theme, open }) => ({
   '& .MuiDrawer-paper': {
-    position: 'relative',
-    whiteSpace: 'nowrap',
     width: drawerWidth,
+    [theme.breakpoints.up('sm')]: {
+      position: 'relative',
+      whiteSpace: 'nowrap',
+    },
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -78,9 +80,6 @@ const DrawerStyled = styled(Drawer, {
         duration: theme.transitions.duration.leavingScreen,
       }),
       width: theme.spacing(7),
-      [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(9),
-      },
     }),
   },
 }));
@@ -92,8 +91,11 @@ const Sidebar: React.FC = () => {
   const [open, setOpen] = useState(true);
 
   const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-    setOpen(!open);
+    if (isMobile) {
+      setMobileOpen(!mobileOpen);
+    } else {
+      setOpen(!open);
+    }
   };
 
   const iconColor = darkMode ? '#96CD32' : '#1423DC';
@@ -109,11 +111,9 @@ const Sidebar: React.FC = () => {
 
   const drawer = (
     <React.Fragment>
-      {open && (
-        <Box sx={{ width: '100%', p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <img src={logo} alt="Sidebar Logo" style={{ maxHeight: '100px', maxWidth: '100%' }} />
-        </Box>
-      )}
+      <Box sx={{ width: '100%', p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <img src={logo} alt="Sidebar Logo" style={{ maxHeight: '100px', maxWidth: '100%' }} />
+      </Box>
       <Divider />
       <List>
         <ListItem disablePadding>
@@ -189,23 +189,31 @@ const Sidebar: React.FC = () => {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       {isMobile && (
-        <AppBarStyled position="absolute" open={mobileOpen}>
-          <Toolbar sx={{ paddingRight: '24px', height: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <AppBarStyled position="fixed" open={mobileOpen}>
+          <Toolbar>
             <IconButton
-              edge="start"
               color="inherit"
               aria-label="open drawer"
+              edge="start"
               onClick={handleDrawerToggle}
-              sx={{ marginRight: '36px', width: '100%' }}
+              sx={{ mr: 2 }}
             >
-              <Typography component="span" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1, marginLeft: '8px' }}>
-                Menu
-              </Typography>
+              <MenuIcon />
             </IconButton>
+            <Typography variant="h6" noWrap>
+              Menu
+            </Typography>
           </Toolbar>
         </AppBarStyled>
       )}
-      <DrawerStyled variant={isMobile ? 'temporary' : 'permanent'} open={isMobile ? mobileOpen : open}>
+      <DrawerStyled
+        variant={isMobile ? 'temporary' : 'permanent'}
+        open={isMobile ? mobileOpen : open}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+      >
         <Toolbar
           sx={{
             display: 'flex',
@@ -214,8 +222,8 @@ const Sidebar: React.FC = () => {
             px: [1],
           }}
         >
-          <IconButton onClick={handleDrawerToggle} sx={{ width: '100%' }}>
-            <ChevronLeftIcon />
+          <IconButton onClick={handleDrawerToggle}>
+            {isMobile ? <ChevronLeftIcon /> : open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </Toolbar>
         {drawer}

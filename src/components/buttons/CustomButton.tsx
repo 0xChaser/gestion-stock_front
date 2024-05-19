@@ -5,6 +5,7 @@ import { styled } from '@mui/system';
 interface CustomButtonProps {
   text: string;
   disabled?: boolean;
+  type?: 'submit';
   onClick?: () => void;
 }
 
