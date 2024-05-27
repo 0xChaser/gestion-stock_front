@@ -1,7 +1,7 @@
 import React from 'react';
 import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
-import CustomButton from '@/components/buttons/CustomButton';
-import CustomDeleteButton from '@/components/buttons/CustomDeleteButton';
+import CustomButton from '../../components/buttons/CustomButton';
+import CustomDeleteButton from '../../components/buttons/CustomDeleteButton';
 
 interface Column {
   id: string;

@@ -9,7 +9,7 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material';
-import CustomButton from '@/components/buttons/CustomButton';
+import CustomButton from '../../components/buttons/CustomButton';
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;

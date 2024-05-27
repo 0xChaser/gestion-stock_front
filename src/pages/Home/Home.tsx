@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme, Button, Box, Typography } from '@mui/material';
-import StockImage from '@/assets/images/image_stock.png';
-import { useTheme } from '@/contexts/themeContext';
+import StockImage from '../../assets/images/image_stock.png';
+import { useTheme } from '../../contexts/themeContext';
 
 const HomePage: React.FC = () => {
   const { darkMode } = useTheme();

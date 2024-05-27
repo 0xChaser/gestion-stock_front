@@ -1,13 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from '@/contexts/themeContext';
-import Sidebar from '@/pages/Sidebar';
-import Home from '@/pages/Home';
-import StockList from '@/pages/Stock';
-import UserList from '@/pages/Users';
-import Login from '@/pages/Login';
-import CategoryList from '@/pages/Category';
-import ProductList from '@/pages/Products';
+import { ThemeProvider } from './contexts/themeContext';
+import { Sidebar, Home, StockList, UserList, Login, CategoryList, ProductList } from './pages';
 import { useMediaQuery, Toolbar } from '@mui/material';
 
 const drawerWidth = 240;

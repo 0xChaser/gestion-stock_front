@@ -4,7 +4,7 @@ import apiConfig from '../../api/apiConfig';
 import AddStockModal from '../Modals/addStockModal';
 import { useTheme } from '../../contexts/themeContext';
 import BookmarkAdd from '@mui/icons-material/BookmarkAddOutlined';
-import CustomButton from '@/components/buttons/CustomButton';
+import CustomButton from '../../components/buttons/CustomButton';
 
 interface StockItem {
   id: number;

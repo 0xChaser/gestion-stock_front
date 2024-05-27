@@ -4,13 +4,13 @@ import apiConfig from '../../api/apiConfig';
 import AddProductModal from '../Modals/addProductModal';
 import EditProductModal from '../Modals/editProductModal';
 import DeleteConfirmationModal from '../Modals/DeleteModal';
-import CustomSnackbar from '@/components/Snackbar/CustomSnackbar';
+import CustomSnackbar from '../../components/snackbar/CustomSnackbar';
 import { useTheme } from '../../contexts/themeContext';
-import CustomButton from '@/components/buttons/CustomButton';
-import CustomDeleteButton from '@/components/buttons/CustomDeleteButton';
-import CustomTitle from '@/components/titles/CustomTitle';
-import ToggleViewButton from '@/components/buttons/ToggleViewButton';
-import CustomTable from '@/components/tables/CustomTable';
+import CustomButton from '../../components/buttons/CustomButton';
+import CustomDeleteButton from '../../components/buttons/CustomDeleteButton';
+import CustomTitle from '../../components/titles/CustomTitle';
+import ToggleViewButton from '../../components/buttons/ToggleViewButton';
+import CustomTable from '../../components/tables/CustomTable';
 
 interface Product {
   id: string;

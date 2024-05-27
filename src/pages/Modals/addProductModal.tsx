@@ -4,8 +4,8 @@ import { Modal as BaseModal } from '@mui/base/Modal';
 import { useTheme } from '@mui/material/styles';
 import { Box, InputLabel, MenuItem, Select, SelectChangeEvent, Typography, Snackbar, Alert } from '@mui/material';
 import apiConfig from '../../api/apiConfig';
-import CustomButton from '@/components/buttons/CustomButton';
-import CustomInput from '@/components/inputs/CustomInput';
+import CustomButton from '../../components/buttons/CustomButton';
+import CustomInput from '../../components/inputs/CustomInput';
 import OutlinedInput from '@mui/material/OutlinedInput'; 
 
 interface ProductModalProps {
