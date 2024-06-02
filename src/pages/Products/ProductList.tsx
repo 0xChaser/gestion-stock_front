@@ -18,7 +18,7 @@ interface Product {
   price: number;
   categories: { id: string; name: string; }[];
 }
-
+ 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
