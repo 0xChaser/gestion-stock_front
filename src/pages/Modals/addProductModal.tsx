@@ -59,12 +59,16 @@ const AddProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onAddPr
     setFormData(prev => ({ ...prev, categories: selectedCategories }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     console.log('Form submitted with data:', formData);
-    onAddProduct(formData);
-    onClose();
-    setSnackbarOpen(true);
+    try {
+      onAddProduct(formData);
+      console.log('Product added, closing modal');
+      onClose();
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
   };
 
   const handleSnackbarClose = () => {
@@ -111,6 +115,7 @@ const AddProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onAddPr
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
               <CustomButton text="Ajouter" disabled={false} type="submit" />
+              {/* <button type="submit">Ajouter</button> */}
             </Box>
           </form>
         </ModalContent>

@@ -5,7 +5,7 @@ import { styled } from '@mui/system';
 interface CustomButtonProps {
   text: string;
   disabled?: boolean;
-  type?: 'submit';
+  type?: 'submit' | 'button' | 'reset';
   onClick?: () => void;
 }
 
@@ -74,8 +74,8 @@ const Button = styled(BaseButton)(
 `,
 );
 
-const CustomButton: React.FC<CustomButtonProps> = ({ text, disabled, onClick }) => {
-  return <Button disabled={disabled} onClick={onClick}>{text}</Button>;
+const CustomButton: React.FC<CustomButtonProps> = ({ text, disabled, type, onClick }) => {
+  return <Button disabled={disabled} type={type} onClick={onClick}>{text}</Button>;
 };
 
 export default CustomButton;

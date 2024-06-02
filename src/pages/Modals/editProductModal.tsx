@@ -7,12 +7,13 @@ import apiConfig from '../../api/apiConfig';
 import CustomButton from '../../components/buttons/CustomButton';
 import CustomInput from '../../components/inputs/CustomInput';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import axios from 'axios';
 
 interface EditProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onEditProduct: (id: string, formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => void;
-  product: { id: string; name: string; price: number; categories: { id: string; name: string; }[] };
+  onEditProduct: (id: string, formData: FormData) => void;
+  product: { id: string; name: string; price: number; categories: Category[] };
 }
 
 interface Category {
@@ -23,13 +24,12 @@ interface Category {
 interface FormData {
   name: string;
   price: number;
-  categories: { id: string; name: string; }[];
+  categories: Category[];
 }
 
 const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, onEditProduct, product }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState<FormData>({ name: product.name, price: product.price, categories: product.categories });
-  const [hover, setHover] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const theme = useTheme();
@@ -60,12 +60,33 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, on
     setFormData(prev => ({ ...prev, categories: selectedCategories }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('Form submitted with data:', formData);
-    onEditProduct(product.id, formData);
-    onClose();
-    setSnackbarOpen(true);
+
+    const updatedProduct = {
+      name: formData.name,
+      price: formData.price,
+      categories: formData.categories.map(category => ({
+        id: category.id,
+        name: category.name,
+      })),
+    };
+
+    console.log(updatedProduct);
+
+    try {
+      const response = await apiConfig.patch(`/product/${product.id}`, updatedProduct);
+      console.log('Réponse de l\'API:', response.data);
+      onEditProduct(product.id, updatedProduct);
+      setSnackbarOpen(true);
+      onClose();
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error('Erreur lors de la modification du produit', error.response?.data);
+      } else {
+        console.error('Erreur lors de la modification du produit', (error as Error).message);
+      }
+    }
   };
 
   const handleSnackbarClose = () => {
@@ -111,7 +132,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, on
             </Select>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <CustomButton text="Modifier" disabled={false} />
+              <CustomButton text="Modifier" type="submit" disabled={false} />
             </Box>
           </form>
         </ModalContent>
