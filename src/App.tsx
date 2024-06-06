@@ -14,7 +14,7 @@ const App: React.FC = () => {
       <Router>
         <div style={{ display: 'flex', minHeight: '100vh' }}>
           <Sidebar />
-          <div style={{ flex: 1, overflowY: 'auto', marginLeft: isMobile ? 0 : drawerWidth }}>
+          <div style={{ flex: 1, overflowY: 'auto' }}>
             {isMobile && <Toolbar />}
             <Routes>
               <Route path="/" element={<Home />} />
