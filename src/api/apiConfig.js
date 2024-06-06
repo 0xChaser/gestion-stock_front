@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://85.215.163.79/api/v1',
+  baseURL: 'https://e-stock.flo-isk.fr/api/v1',
   headers: {
     'Content-Type': 'application/json',
     
