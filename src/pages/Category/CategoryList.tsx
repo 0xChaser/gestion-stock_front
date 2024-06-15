@@ -53,7 +53,8 @@ const CategoryList: React.FC = () => {
     async function fetchCategories() {
       try {
         const response = await apiConfig.get('/category/');
-        setCategories(response.data);
+        const sortedCategories = response.data.sort((a: Category, b: Category) => a.name.localeCompare(b.name));
+        setCategories(sortedCategories);
       } catch (error) {
         console.error('Problème de récupération', error);
       }
@@ -148,13 +149,13 @@ const CategoryList: React.FC = () => {
         />
 
         {view === 'module' ? (
-          <Grid container spacing={3}>
+          <Grid container spacing={5}>
             {categories.map((category) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={category.id}>
                 <StyledCard>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="h6" component="div">
+                      <Typography variant="subtitle1" component="div">
                         {category.name}
                       </Typography>
                     </Box>

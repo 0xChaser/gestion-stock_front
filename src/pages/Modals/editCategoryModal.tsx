@@ -45,6 +45,9 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({ isOpen, onClose, 
       onEditCategory(category.id, updatedCategory);
       setSnackbarOpen(true);
       onClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Erreur lors de la modification de la catégorie', error.response?.data);

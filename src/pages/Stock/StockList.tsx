@@ -119,7 +119,7 @@ const StockList: React.FC = () => {
   const editStock = async (id: string, formData: { quantity: number }) => {
     try {
       const response = await apiConfig.patch(`/stock/${id}`, formData);
-      setStocks(prevStocks => prevStocks.map(stock => stock.id === id ? response.data : stock));
+      setStocks(prevStocks => prevStocks.map(stock => (stock.id === id ? { ...stock, quantity: formData.quantity } : stock)));
       setSnackbarMessage('Stock modifié avec succès !');
       setSnackbarOpen(true);
     } catch (error) {
@@ -150,7 +150,7 @@ const StockList: React.FC = () => {
     { id: 'product.name', label: 'Nom du Produit' },
     { id: 'quantity', label: 'Quantité', align: 'right' },
     { id: 'product.price', label: 'Prix (en €)', align: 'right' },
-    { id: 'product.categories', label: 'Catégories', align: 'right', format: (value: any) => value.map((category: any) => category.name).join(', ') || 'Pas de catégorie' }
+    { id: 'product.categories', label: 'Catégories', align: 'right', format: (value: any) => Array.isArray(value) ? value.map((category: any) => category.name).join(', ') : 'Pas de catégorie' }
   ];
 
   return (
@@ -191,15 +191,15 @@ const StockList: React.FC = () => {
                 <StyledCard>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="h6" component="div">
+                      <Typography variant="subtitle2" component="div">
                         {stock.product.name}
                       </Typography>
-                      <Typography variant="h6" component="div">
+                      <Typography variant="body1" component="div">
                         {stock.quantity}
                       </Typography>
                     </Box>
                     <Typography variant="body2" sx={{ mt: 2 }}>
-                      Catégorie(s): {stock.product.categories.map(cat => cat.name).join(', ') || 'Pas de catégorie'}
+                      Catégorie(s): {Array.isArray(stock.product.categories) ? stock.product.categories.map(cat => cat.name).join(', ') : 'Pas de catégorie'}
                     </Typography>
                     <Typography variant="body2" sx={{ mt: 2 }}>
                       Prix: {stock.product.price} €
@@ -217,7 +217,12 @@ const StockList: React.FC = () => {
           <Box sx={{ width: '100%' }}>
             <CustomTable
               columns={columns}
-              data={stocks}
+              data={stocks.map(stock => ({
+                ...stock,
+                'product.name': stock.product.name,
+                'product.price': stock.product.price,
+                'product.categories': Array.isArray(stock.product.categories) ? stock.product.categories.map(cat => cat.name).join(', ') : 'Pas de catégorie',
+              }))}
               onEdit={openEditModal}
               onDelete={openDeleteModal}
             />

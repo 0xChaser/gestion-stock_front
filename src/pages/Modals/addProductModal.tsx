@@ -80,6 +80,9 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
       onAddProduct(newProduct);
       setSnackbarOpen(true);
       onClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {  
         console.error('Erreur lors de l\'ajout du produit', error.response?.data);

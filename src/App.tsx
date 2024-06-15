@@ -14,7 +14,14 @@ const App: React.FC = () => {
       <Router>
         <div style={{ display: 'flex', minHeight: '100vh' }}>
           <Sidebar />
-          <div style={{ flex: 1, overflowY: 'auto' }}>
+          <main
+            style={{
+              flexGrow: 1,
+              marginLeft: isMobile ? 0 : drawerWidth,
+              width: isMobile ? '100%' : `calc(100% - ${drawerWidth}px)`,
+              overflowY: 'auto',
+            }}
+          >
             {isMobile && <Toolbar />}
             <Routes>
               <Route path="/" element={<Home />} />
@@ -24,7 +31,7 @@ const App: React.FC = () => {
               <Route path="/category" element={<CategoryList />} />
               <Route path="/products" element={<ProductList />} />
             </Routes>
-          </div>
+          </main>
         </div>
       </Router>
     </ThemeProvider>

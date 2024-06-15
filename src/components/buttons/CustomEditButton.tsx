@@ -3,13 +3,13 @@ import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/Edit';
 import { styled } from '@mui/system';
 
-const blue = {
-    100: '#DAECFF',
-    200: '#80BFFF',
-    400: '#3399FF',
-    500: '#007FFF',
-    600: '#0072E5',
-  };
+const green = {
+  100: '#EAF8D0',
+  200: '#C8EB8E',
+  400: '#96CD32',
+  500: '#7BB82B',
+  600: '#669924',
+};
   
 
 interface CustomButtonProps {
@@ -19,16 +19,16 @@ interface CustomButtonProps {
 }
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: blue[400],
+  backgroundColor: green[400],
   color: 'white',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   '&:hover': {
-    backgroundColor: blue[500],
+    backgroundColor: green[500],
   },
   '&:active': {
-    backgroundColor: blue[600],
+    backgroundColor: green[600],
   },
   '&.Mui-disabled': {
     backgroundColor: theme.palette.action.disabledBackground,
@@ -36,18 +36,18 @@ const StyledButton = styled(Button)(({ theme }) => ({
   },
   padding: 0, 
   minWidth: 0,
-  height: 48,
-  width: 48,
+  height: 40,
+  width: 40,
   borderRadius: 8,
 }));
 
 const CustomButton: React.FC<CustomButtonProps> = ({ disabled, onClick }) => {
   return (
     <StyledButton
-      startIcon={<EditIcon />}
-      disabled={disabled}
-      onClick={onClick}
-    >
+    disabled={disabled}
+    onClick={onClick}
+  >
+      <EditIcon />
     </StyledButton>
   );
 };

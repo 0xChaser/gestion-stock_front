@@ -80,6 +80,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, on
       onEditProduct(product.id, updatedProduct);
       setSnackbarOpen(true);
       onClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Erreur lors de la modification du produit', error.response?.data);

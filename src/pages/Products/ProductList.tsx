@@ -55,7 +55,8 @@ const ProductList: React.FC = () => {
     async function fetchProducts() {
       try {
         const response = await apiConfig.get('/product/');
-        setProducts(response.data);
+        const sortedProducts = response.data.sort((a: Product, b: Product) => a.name.localeCompare(b.name));
+        setProducts(sortedProducts);
       } catch (error) {
         console.error('Problème de récupération', error);
       }
@@ -154,14 +155,14 @@ const ProductList: React.FC = () => {
         {view === 'module' ? (
           <Grid container spacing={3}>
             {products.map((product) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+              <Grid item xs={12} sm={4} md={4} lg={3} key={product.id}>
                 <StyledCard>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="h6" component="div">
+                      <Typography variant="subtitle2" component="div">
                         {product.name}
                       </Typography>
-                      <Typography variant="h6" component="div">
+                      <Typography variant="body1" component="div">
                         {product.price} €
                       </Typography>
                     </Box>

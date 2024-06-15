@@ -64,8 +64,13 @@ interface DrawerStyledProps {
 const DrawerStyled = styled(Drawer)<DrawerStyledProps>(({ theme, open }) => ({
   '& .MuiDrawer-paper': {
     width: drawerWidth,
+    position: 'fixed',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    height: '100vh',
     [theme.breakpoints.up('sm')]: {
-      position: 'relative',
+      position: 'fixed',
       whiteSpace: 'nowrap',
     },
     transition: theme.transitions.create('width', {
@@ -115,7 +120,7 @@ const Sidebar: React.FC = () => {
         <img src={logo} alt="Sidebar Logo" style={{ maxHeight: '100px', maxWidth: '100%' }} />
       </Box>
       <Divider />
-      <List>
+      <List sx={{ flexGrow: 1 }}>
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/">
             <ListItemIcon>
@@ -166,22 +171,20 @@ const Sidebar: React.FC = () => {
         </ListItem>
       </List>
       <Divider />
-      {open && (
-        <Box sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={darkMode}
-                onChange={toggleTheme}
-                inputProps={{ 'aria-label': 'controlled' }}
-                sx={switchStyles}
-              />
-            }
-            label="Changer le thème"
-            sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}
-          />
-        </Box>
-      )}
+      <Box sx={{ p: 2, ...(isMobile && { position: 'absolute', bottom: 0, width: '100%' }) }}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={darkMode}
+              onChange={toggleTheme}
+              inputProps={{ 'aria-label': 'controlled' }}
+              sx={switchStyles}
+            />
+          }
+          label={open ? "Changer le thème" : ""}
+          sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}
+        />
+      </Box>
     </React.Fragment>
   );
 

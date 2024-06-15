@@ -35,16 +35,19 @@ const StyledButton = styled(Button)(({ theme }) => ({
     color: theme.palette.action.disabled,
   },
   padding: 0, 
+  minWidth: 0,
+  height: 40,
+  width: 40,
   borderRadius: 8,
 }));
 
 const CustomButton: React.FC<CustomButtonProps> = ({ disabled, onClick }) => {
   return (
     <StyledButton
-      startIcon={<DeleteIcon />}
-      disabled={disabled}
-      onClick={onClick}
-    >
+    disabled={disabled}
+    onClick={onClick}
+  >
+      <DeleteIcon />
     </StyledButton>
   );
 };

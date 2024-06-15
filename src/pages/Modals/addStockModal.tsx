@@ -80,6 +80,9 @@ const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddSto
       onAddStock(newStock);
       setSnackbarOpen(true);
       onClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Erreur lors de l\'ajout du stock', error.response?.data);
