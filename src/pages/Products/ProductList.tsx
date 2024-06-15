@@ -90,29 +90,9 @@ const ProductList: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-  const addProduct = async (formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {
-    try {
-      const response = await apiConfig.post('/product', formData);
-      setProducts(prevProducts => [...prevProducts, response.data]);
-      closeModal();
-      setSnackbarMessage('Produit ajouté avec succès !');
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Erreur lors de l\'ajout du produit', error);
-    }
-  };
+  const addProduct = async (formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {};
 
-  const editProduct = async (id: string, formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {
-    try {
-      const response = await apiConfig.patch(`/product/${id}`, formData);
-      setProducts(prevProducts => prevProducts.map(product => (product.id === id ? response.data : product)));
-      closeEditModal();
-      setSnackbarMessage('Produit modifié avec succès !');
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Erreur lors de la modification du produit', error);
-    }
-  };
+  const editProduct = async (id: string, formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {};
 
   const deleteProduct = async () => {
     if (selectedProduct === null) return;
@@ -136,7 +116,7 @@ const ProductList: React.FC = () => {
   const columns = [
     { id: 'name', label: 'Nom du Produit' },
     { id: 'price', label: 'Prix (en €)', align: 'right' },
-    { id: 'categories', label: 'Catégories', align: 'right', format: (value: any) => value.map((cat: any) => cat.name).join(', ') || 'Pas de catégorie' }
+    { id: 'categories', label: 'Catégories', align: 'right', format: (value: any) => value.map((category: any) => category.name).join(', ') || 'Pas de catégorie' }
   ];
 
   return (

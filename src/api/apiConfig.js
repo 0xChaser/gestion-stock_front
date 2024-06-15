@@ -3,9 +3,9 @@ import axios from 'axios';
 const apiClient = axios.create({
   baseURL: 'https://e-stock.flo-isk.fr/api/v1',
   headers: {
-    'Content-Type': 'application/json',
-    
+    'Content-Type': 'application/json',    
   },
+  maxRedirects: 3
 });
 
 export const setClientHeader = (key, value) => {

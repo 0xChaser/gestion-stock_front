@@ -6,12 +6,13 @@ import { Box, InputLabel, MenuItem, Select, SelectChangeEvent, Typography, Snack
 import apiConfig from '../../api/apiConfig';
 import CustomButton from '../../components/buttons/CustomButton';
 import CustomInput from '../../components/inputs/CustomInput';
-import OutlinedInput from '@mui/material/OutlinedInput'; 
+import OutlinedInput from '@mui/material/OutlinedInput';
+import axios from 'axios' ;
 
-interface ProductModalProps {
+interface AddProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddProduct: (formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => void;
+  onAddProduct: (formData: FormData) => void;
 }
 
 interface Category {
@@ -22,13 +23,12 @@ interface Category {
 interface FormData {
   name: string;
   price: number;
-  categories: { id: string; name: string; }[];
+  categories: Category[];
 }
 
-const AddProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onAddProduct }) => {
+const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAddProduct }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState<FormData>({ name: '', price: 0, categories: [] });
-  const [hover, setHover] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const theme = useTheme();
@@ -60,14 +60,32 @@ const AddProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onAddPr
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    console.log('Form submitted with data:', formData);
+    event.preventDefault();
+
+    const newProduct = {
+      name: formData.name,
+      price: formData.price,
+      categories: formData.categories.map(category => ({
+        id: category.id,
+        name: category.name,
+      })),
+    };
+
+    console.log(newProduct);
+
     try {
-      onAddProduct(formData);
-      console.log('Product added, closing modal');
-      onClose();
+      const response = await apiConfig.post('/product/', newProduct, {
+      });
+      console.log('Réponse de l\'API:', response.data);
+      onAddProduct(newProduct);
       setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Error adding product:', error);
+      onClose();
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {  
+        console.error('Erreur lors de l\'ajout du produit', error.response?.data);
+      } else {
+        console.error('Erreur lors de l\'ajout du produit', (error as Error).message);
+      }
     }
   };
 
@@ -114,8 +132,7 @@ const AddProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onAddPr
             </Select>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <CustomButton text="Ajouter" disabled={false} type="submit" />
-              {/* <button type="submit">Ajouter</button> */}
+              <CustomButton text="Ajouter" type="submit" disabled={false} />
             </Box>
           </form>
         </ModalContent>
