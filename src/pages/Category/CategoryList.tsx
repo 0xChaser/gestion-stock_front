@@ -17,7 +17,7 @@ interface Category {
   id: string;
   name: string;
 }
- 
+
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -49,16 +49,17 @@ const CategoryList: React.FC = () => {
     },
   }));
 
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const response = await apiConfig.get('/category/');
-        const sortedCategories = response.data.sort((a: Category, b: Category) => a.name.localeCompare(b.name));
-        setCategories(sortedCategories);
-      } catch (error) {
-        console.error('Problème de récupération', error);
-      }
+  const fetchCategories = async () => {
+    try {
+      const response = await apiConfig.get('/category/');
+      const sortedCategories = response.data.sort((a: Category, b: Category) => a.name.localeCompare(b.name));
+      setCategories(sortedCategories);
+    } catch (error) {
+      console.error('Problème de récupération', error);
     }
+  };
+
+  useEffect(() => {
     fetchCategories();
   }, []);
 
@@ -90,16 +91,35 @@ const CategoryList: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-  const addCategory = async (formData: { name: string }) => {};
+  const addCategory = async (formData: { name: string }) => {
+    try {
+      await apiConfig.post('/category/', formData);
+      fetchCategories();
+      setSnackbarMessage('Catégorie ajoutée avec succès !');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de la catégorie', error);
+    }
+  };
 
-  const editCategory = async (id: string, formData: { name: string }) => {};
+  const editCategory = async (id: string, formData: { name: string }) => {
+    try {
+      await apiConfig.patch(`/category/${id}`, formData);
+      fetchCategories();
+      setSnackbarMessage('Catégorie modifiée avec succès !');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Erreur lors de la modification de la catégorie', error);
+    }
+  };
 
   const deleteCategory = async () => {
     if (selectedCategory === null) return;
     try {
+      console.log('Deleting category with ID:', selectedCategory.id);
       await apiConfig.delete(`/category/${selectedCategory.id}`);
-      setCategories(prevCategories => prevCategories.filter(cat => cat.id !== selectedCategory.id));
       closeDeleteModal();
+      fetchCategories(); 
       setSnackbarMessage('Catégorie supprimée avec succès !');
       setSnackbarOpen(true);
     } catch (error) {

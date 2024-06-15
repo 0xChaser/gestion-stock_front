@@ -51,16 +51,17 @@ const ProductList: React.FC = () => {
     },
   }));
 
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const response = await apiConfig.get('/product/');
-        const sortedProducts = response.data.sort((a: Product, b: Product) => a.name.localeCompare(b.name));
-        setProducts(sortedProducts);
-      } catch (error) {
-        console.error('Problème de récupération', error);
-      }
+  const fetchProducts = async () => {
+    try {
+      const response = await apiConfig.get('/product/');
+      const sortedProducts = response.data.sort((a: Product, b: Product) => a.name.localeCompare(b.name));
+      setProducts(sortedProducts);
+    } catch (error) {
+      console.error('Problème de récupération', error);
     }
+  };
+
+  useEffect(() => {
     fetchProducts();
   }, []);
 
@@ -92,15 +93,33 @@ const ProductList: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-  const addProduct = async (formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {};
+  const addProduct = async (formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {
+    try {
+      const response = await apiConfig.post('/product/', formData);
+      fetchProducts();
+      setSnackbarMessage('Produit ajouté avec succès !');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout du produit', error);
+    }
+  };
 
-  const editProduct = async (id: string, formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {};
+  const editProduct = async (id: string, formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {
+    try {
+      const response = await apiConfig.patch(`/product/${id}`, formData);
+      fetchProducts();
+      setSnackbarMessage('Produit modifié avec succès !');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Erreur lors de la modification du produit', error);
+    }
+  };
 
   const deleteProduct = async () => {
     if (selectedProduct === null) return;
     try {
       await apiConfig.delete(`/product/${selectedProduct.id}`);
-      setProducts(prevProducts => prevProducts.filter(prod => prod.id !== selectedProduct.id));
+      fetchProducts();
       closeDeleteModal();
       setSnackbarMessage('Produit supprimé avec succès !');
       setSnackbarOpen(true);

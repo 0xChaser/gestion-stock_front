@@ -44,9 +44,6 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ isOpen, onClose, on
       onAddCategory(newCategory);
       setSnackbarOpen(true);
       onClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Erreur lors de l\'ajout de la catégorie', error.response?.data);

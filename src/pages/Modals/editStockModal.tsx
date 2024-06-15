@@ -57,9 +57,6 @@ const EditStockModal: React.FC<EditStockModalProps> = ({ isOpen, onClose, onEdit
       onEditStock(stock.id, updatedStock);
       setSnackbarOpen(true);
       onClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Erreur lors de la modification du stock', error.response?.data);

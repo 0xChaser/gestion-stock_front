@@ -65,15 +65,16 @@ const StockList: React.FC = () => {
     },
   }));
 
-  useEffect(() => {
-    async function fetchStocks() {
-      try {
-        const response = await apiConfig.get('/stock/');
-        setStocks(response.data);
-      } catch (error) {
-        console.error('Problème de récupération', error);
-      }
+  const fetchStocks = async () => {
+    try {
+      const response = await apiConfig.get('/stock/');
+      setStocks(response.data);
+    } catch (error) {
+      console.error('Problème de récupération', error);
     }
+  };
+
+  useEffect(() => {
     fetchStocks();
   }, []);
 
@@ -108,7 +109,7 @@ const StockList: React.FC = () => {
   const addStock = async (formData: FormData) => {
     try {
       const response = await apiConfig.post('/stock/', formData);
-      setStocks(prevStocks => [...prevStocks, response.data]);
+      fetchStocks();
       setSnackbarMessage('Stock ajouté avec succès !');
       setSnackbarOpen(true);
     } catch (error) {
@@ -119,7 +120,7 @@ const StockList: React.FC = () => {
   const editStock = async (id: string, formData: { quantity: number }) => {
     try {
       const response = await apiConfig.patch(`/stock/${id}`, formData);
-      setStocks(prevStocks => prevStocks.map(stock => (stock.id === id ? { ...stock, quantity: formData.quantity } : stock)));
+      fetchStocks();
       setSnackbarMessage('Stock modifié avec succès !');
       setSnackbarOpen(true);
     } catch (error) {
@@ -131,7 +132,7 @@ const StockList: React.FC = () => {
     if (selectedStock === null) return;
     try {
       await apiConfig.delete(`/stock/${selectedStock.id}`);
-      setStocks(prevStocks => prevStocks.filter(stock => stock.id !== selectedStock.id));
+      fetchStocks();
       closeDeleteModal();
       setSnackbarMessage('Stock supprimé avec succès !');
       setSnackbarOpen(true);
