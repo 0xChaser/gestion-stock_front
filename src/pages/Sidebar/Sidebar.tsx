@@ -211,7 +211,7 @@ const Sidebar: React.FC = () => {
         open={isMobile ? mobileOpen : open}
         onClose={handleDrawerToggle}
         ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
+          keepMounted: true,
         }}
       >
         <Toolbar

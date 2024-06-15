@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
         <Typography variant="h3" style={{ color: darkMode ? '#96CD32' : '#232876', marginBottom: 20 }}>
           Bienvenue sur E-Stock!
         </Typography>
-        <img src={StockImage} alt="Stock" style={{ maxWidth: '100%', height: 'auto' }} />
+        <img src={StockImage} alt="Stock" style={{ maxWidth: '40%', height: 'auto' }} />
         <Box sx={{ marginTop: 3 }}>
           <Button component={Link} to="/stock" variant="contained" color="primary">
             Voir le stock

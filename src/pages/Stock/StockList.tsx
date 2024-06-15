@@ -1,37 +1,74 @@
 import React, { useState, useEffect } from 'react';
-import { CssBaseline, ThemeProvider, createTheme, Button, Box, Typography, Stack, Card, CardContent, IconButton, CardActions } from '@mui/material';
+import { CssBaseline, ThemeProvider, createTheme, Box, Grid, Typography, styled, Card, CardContent } from '@mui/material';
 import apiConfig from '../../api/apiConfig';
 import AddStockModal from '../Modals/addStockModal';
+import EditStockModal from '../Modals/editStockModal';
+import DeleteConfirmationModal from '../Modals/DeleteModal';
+import CustomSnackbar from '../../components/snackbar/CustomSnackbar';
 import { useTheme } from '../../contexts/themeContext';
-import BookmarkAdd from '@mui/icons-material/BookmarkAddOutlined';
 import CustomButton from '../../components/buttons/CustomButton';
+import CustomDeleteButton from '../../components/buttons/CustomDeleteButton';
+import CustomEditButton from '../../components/buttons/CustomEditButton';
+import CustomTitle from '../../components/titles/CustomTitle';
+import ToggleViewButton from '../../components/buttons/ToggleViewButton';
+import CustomTable from '../../components/tables/CustomTable';
 
-interface StockItem {
-  id: number;
-  name: string;
-  category: string;
+interface Stock {
+  id: string;
+  product: {
+    name: string;
+    price: number;
+    categories: { name: string; id: string; }[];
+    id: string;
+  };
   quantity: number;
-  price: number;
+}
+
+interface FormData {
+  product: {
+    id: string;
+    name: string;
+    price: number;
+    categories: { name: string; id: string; }[];
+  };
+  quantity: number;
 }
 
 const StockList: React.FC = () => {
-  const [stocks, setStocks] = useState<StockItem[]>([]);
+  const [stocks, setStocks] = useState<Stock[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [editModalIsOpen, setEditModalIsOpen] = useState(false);
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+  const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [view, setView] = useState('module');
   const { darkMode } = useTheme();
 
   const theme = createTheme({
     palette: {
       mode: darkMode ? 'dark' : 'light',
-      primary: { main: '#232876' },
-      background: { paper: darkMode ? '#333' : '#F2F2F2', default: darkMode ? '#121212' : '#fff' },
-      text: { primary: darkMode ? '#fff' : '#000' },
     },
   });
+
+  const StyledCard = styled(Card)(({ theme }) => ({
+    backgroundColor: darkMode ? '#0a1929' : '#F0F7FF',
+    boxShadow: theme.shadows[3],
+    borderRadius: '8px',
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(2),
+    border: darkMode ? '1px solid #2a384e' : '1px solid #66B3FF',
+    color: darkMode ? '#ffffff' : '#303741',
+    '&:hover': {
+      boxShadow: theme.shadows[6],
+      border: '1px solid #3ea6ff',
+    },
+  }));
 
   useEffect(() => {
     async function fetchStocks() {
       try {
-        const response = await apiConfig.get('/stock');
+        const response = await apiConfig.get('/stock/');
         setStocks(response.data);
       } catch (error) {
         console.error('Problème de récupération', error);
@@ -43,31 +80,78 @@ const StockList: React.FC = () => {
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
 
-  const addStock = async (stockItem: Omit<StockItem, 'id'>) => {
+  const openEditModal = (stock: Stock) => {
+    setSelectedStock(stock);
+    setEditModalIsOpen(true);
+  };
+  const closeEditModal = () => {
+    setSelectedStock(null);
+    setEditModalIsOpen(false);
+  };
+
+  const openDeleteModal = (stock: Stock) => {
+    setSelectedStock(stock);
+    setDeleteModalIsOpen(true);
+  };
+  const closeDeleteModal = () => {
+    setSelectedStock(null);
+    setDeleteModalIsOpen(false);
+  };
+
+  const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  const addStock = async (formData: FormData) => {
     try {
-      const response = await apiConfig.post('/stock', stockItem);
+      const response = await apiConfig.post('/stock/', formData);
       setStocks(prevStocks => [...prevStocks, response.data]);
-      closeModal();
-      console.log('Stock ajouté avec succès', response.data);
+      setSnackbarMessage('Stock ajouté avec succès !');
+      setSnackbarOpen(true);
     } catch (error) {
       console.error('Erreur lors de l\'ajout du stock', error);
-      throw error;
     }
   };
 
-  const deleteStock = async (stockId: number) => {
+  const editStock = async (id: string, formData: { quantity: number }) => {
     try {
-      await apiConfig.delete(`/stock/${stockId}`);
-      setStocks(prevStocks => prevStocks.filter(stock => stock.id !== stockId));
-      console.log('Stock supprimé avec succès');
+      const response = await apiConfig.patch(`/stock/${id}`, formData);
+      setStocks(prevStocks => prevStocks.map(stock => stock.id === id ? response.data : stock));
+      setSnackbarMessage('Stock modifié avec succès !');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Erreur lors de la modification du stock', error);
+    }
+  };
+
+  const deleteStock = async () => {
+    if (selectedStock === null) return;
+    try {
+      await apiConfig.delete(`/stock/${selectedStock.id}`);
+      setStocks(prevStocks => prevStocks.filter(stock => stock.id !== selectedStock.id));
+      closeDeleteModal();
+      setSnackbarMessage('Stock supprimé avec succès !');
+      setSnackbarOpen(true);
     } catch (error) {
       console.error('Erreur lors de la suppression du stock', error);
     }
   };
 
-  const editStock = (stock: StockItem) => {
-    console.log('Modifier le stock:', stock);
+  const handleViewChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
+    if (nextView !== null) {
+      setView(nextView);
+    }
   };
+
+  const columns = [
+    { id: 'product.name', label: 'Nom du Produit' },
+    { id: 'quantity', label: 'Quantité', align: 'right' },
+    { id: 'product.price', label: 'Prix (en €)', align: 'right' },
+    { id: 'product.categories', label: 'Catégories', align: 'right', format: (value: any) => value.map((category: any) => category.name).join(', ') || 'Pas de catégorie' }
+  ];
 
   return (
     <ThemeProvider theme={theme}>
@@ -78,46 +162,73 @@ const StockList: React.FC = () => {
         flexDirection: 'column',
         alignItems: 'center',
         gap: 2,
-        width: '100%',
-        minHeight: '100vh'
+        width: '100%'
       }}>
-        <Typography variant="h3" style={{ color: darkMode ? '#96CD32' : '#232876', textAlign: 'center', marginTop: 20, textDecoration: 'underline' }}>
-          Vue du Stock
-        </Typography>
-        <CustomButton text="Ajouter un Stock" onClick={openModal} disabled={false} />
+        <CustomTitle>Liste des Stocks</CustomTitle>
+        <CustomButton text="Ajouter des Stocks" onClick={openModal} disabled={false} />
+        <ToggleViewButton view={view} handleChange={handleViewChange} />
 
         <AddStockModal isOpen={modalIsOpen} onClose={closeModal} onAddStock={addStock} />
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 2 }}>
-          {stocks.map((stock) => (
-            <Card key={stock.id} sx={{ width: 320, padding: 2, borderRadius: 3, boxShadow: 3 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {stock.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {stock.category}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Quantité: {stock.quantity}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Prix: {stock.price}€
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small" onClick={() => editStock(stock)}>Modifier</Button>
-                <Button size="small" color="error" onClick={() => deleteStock(stock.id)}>Supprimer</Button>
-              </CardActions>
-              <IconButton
-                aria-label="bookmark"
-                color="default"
-                sx={{ position: 'absolute', top: '0.875rem', right: '0.5rem' }}
-              >
-                <BookmarkAdd />
-              </IconButton>
-            </Card>
-          ))}
-        </Box>
+        {selectedStock && (
+          <EditStockModal
+            isOpen={editModalIsOpen}
+            onClose={closeEditModal}
+            onEditStock={editStock}
+            stock={selectedStock}
+          />
+        )}
+        <DeleteConfirmationModal
+          isOpen={deleteModalIsOpen}
+          onClose={closeDeleteModal}
+          onConfirm={deleteStock}
+          productName={selectedStock?.product.name || ''}
+        />
+
+        {view === 'module' ? (
+          <Grid container spacing={3}>
+            {stocks.map((stock) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={stock.id}>
+                <StyledCard>
+                  <CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="h6" component="div">
+                        {stock.product.name}
+                      </Typography>
+                      <Typography variant="h6" component="div">
+                        {stock.quantity}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ mt: 2 }}>
+                      Catégorie(s): {stock.product.categories.map(cat => cat.name).join(', ') || 'Pas de catégorie'}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mt: 2 }}>
+                      Prix: {stock.product.price} €
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 3 }}>
+                      <CustomEditButton text="Modifier" onClick={() => openEditModal(stock)} disabled={false} />
+                      <CustomDeleteButton text="Supprimer" onClick={() => openDeleteModal(stock)} disabled={false} />
+                    </Box>
+                  </CardContent>
+                </StyledCard>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Box sx={{ width: '100%' }}>
+            <CustomTable
+              columns={columns}
+              data={stocks}
+              onEdit={openEditModal}
+              onDelete={openDeleteModal}
+            />
+          </Box>
+        )}
+
+        <CustomSnackbar
+          open={snackbarOpen}
+          message={snackbarMessage}
+          onClose={handleSnackbarClose}
+        />
       </Box>
     </ThemeProvider>
   );

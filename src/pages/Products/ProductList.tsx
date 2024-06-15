@@ -8,6 +8,7 @@ import CustomSnackbar from '../../components/snackbar/CustomSnackbar';
 import { useTheme } from '../../contexts/themeContext';
 import CustomButton from '../../components/buttons/CustomButton';
 import CustomDeleteButton from '../../components/buttons/CustomDeleteButton';
+import CustomEditButton from '../../components/buttons/CustomEditButton';
 import CustomTitle from '../../components/titles/CustomTitle';
 import ToggleViewButton from '../../components/buttons/ToggleViewButton';
 import CustomTable from '../../components/tables/CustomTable';
@@ -168,7 +169,7 @@ const ProductList: React.FC = () => {
                       Catégorie(s): {product.categories.map(cat => cat.name).join(', ') || 'Pas de catégorie'}
                     </Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 3 }}>
-                      <CustomButton text="Modifier" onClick={() => openEditModal(product)} disabled={false} />
+                      <CustomEditButton text="Modifier" onClick={() => openEditModal(product)} disabled={false} />
                       <CustomDeleteButton text="Supprimer" onClick={() => openDeleteModal(product)} disabled={false} />
                     </Box>
                   </CardContent>

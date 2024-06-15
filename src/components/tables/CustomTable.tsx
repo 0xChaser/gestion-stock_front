@@ -1,6 +1,6 @@
 import React from 'react';
 import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
-import CustomButton from '../../components/buttons/CustomButton';
+import CustomEditButton from '../../components/buttons/CustomEditButton';
 import CustomDeleteButton from '../../components/buttons/CustomDeleteButton';
 
 interface Column {
@@ -47,7 +47,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onEdit, onDele
               })}
               <TableCell align="center">
                 <Box sx={{ display: 'flex', justifyContent: 'space-evenly', flexDirection:'row' }}>
-                      <CustomButton text="Modifier" onClick={() => onEdit(row)} disabled={false} />
+                      <CustomEditButton text="Modifier" onClick={() => onEdit(row)} disabled={false} />
                       <CustomDeleteButton text="Supprimer" onClick={() => onDelete(row)} disabled={false}/>
                 </Box>
               </TableCell>

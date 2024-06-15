@@ -93,6 +93,8 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, on
     setSnackbarOpen(false);
   };
 
+  
+
   return (
     <>
       <Modal
@@ -126,7 +128,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, on
                 return category ? category.name : '';
               }).join(', ')}
             >
-              {categories.map((category) => (
+              {categories.map((category) => ( 
                 <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
               ))}
             </Select>

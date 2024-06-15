@@ -1,18 +1,18 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { styled, css } from '@mui/system';
 import { Modal as BaseModal } from '@mui/base/Modal';
 import { useTheme } from '@mui/material/styles';
-import { Box, InputLabel, MenuItem, Select, SelectChangeEvent, Typography, Snackbar, Alert } from '@mui/material';
+import { Box, InputLabel, Typography, Snackbar, Alert } from '@mui/material';
 import apiConfig from '../../api/apiConfig';
 import CustomButton from '../../components/buttons/CustomButton';
 import CustomInput from '../../components/inputs/CustomInput';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import axios from 'axios';
 
-interface AddStockModalProps {
+interface EditStockModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddStock: (formData: FormData) => void;
+  onEditStock: (id: string, formData: FormData) => void;
+  stock: { id: string; product: { name: string; price: number; categories: Category[]; id: string }; quantity: number };
 }
 
 interface Category {
@@ -20,71 +20,48 @@ interface Category {
   name: string;
 }
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  categories: Category[];
-}
-
 interface FormData {
-  product: Product;
+  product: {
+    id: string;
+    name: string;
+    price: number;
+    categories: Category[];
+  };
   quantity: number;
 }
 
-const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddStock }) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState<FormData>({ product: { id: '', name: '', price: 0, categories: [] }, quantity: 0 });
+const EditStockModal: React.FC<EditStockModalProps> = ({ isOpen, onClose, onEditStock, stock }) => {
+  const [formData, setFormData] = useState<FormData>({ product: stock.product, quantity: stock.quantity });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const theme = useTheme();
 
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const response = await apiConfig.get('/product/');
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Problème de récupération', error);
-      }
-    }
-    fetchProducts();
-  }, []);
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setFormData(prev => ({ ...prev, [name]: name === 'quantity' ? parseFloat(value) : value }));
-  };
-
-  const handleProductChange = (event: SelectChangeEvent<string>) => {
-    const selectedId = event.target.value;
-    const selectedProduct = products.find(product => product.id === selectedId);
-    setSelectedProduct(selectedProduct || null);
-    setFormData(prev => ({ ...prev, product: selectedProduct! }));
+    setFormData(prev => ({ ...prev, [name]: parseFloat(value) }));
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newStock = {
+    const updatedStock = {
       product: formData.product,
       quantity: formData.quantity,
     };
 
-    console.log(newStock);
+    console.log(updatedStock);
 
     try {
-      const response = await apiConfig.post('/stock/', newStock, {});
+      const response = await apiConfig.patch(`/stock/${stock.id}`, updatedStock);
       console.log('Réponse de l\'API:', response.data);
-      onAddStock(newStock);
+      onEditStock(stock.id, updatedStock);
       setSnackbarOpen(true);
       onClose();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        console.error('Erreur lors de l\'ajout du stock', error.response?.data);
+        console.error('Erreur lors de la modification du stock', error.response?.data);
       } else {
-        console.error('Erreur lors de l\'ajout du stock', (error as Error).message);
+        console.error('Erreur lors de la modification du stock', (error as Error).message);
       }
     }
   };
@@ -104,31 +81,14 @@ const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddSto
       >
         <ModalContent>
           <Typography variant="h6" className="modal-title">
-            Ajouter un stock
+            Modifier un stock
           </Typography>
           <form onSubmit={handleSubmit} className="modal-form">
-            <InputLabel id="product-select-label" className="modal-label">Produit</InputLabel>
-            <Select
-              labelId="product-select-label"
-              id="product-select"
-              value={selectedProduct ? selectedProduct.id : ''}
-              onChange={handleProductChange}
-              input={<OutlinedInput label="Produit" />}
-              renderValue={(selected) => {
-                const product = products.find(prod => prod.id === selected);
-                return product ? product.name : '';
-              }}
-            >
-              {products.map((product) => (
-                <MenuItem key={product.id} value={product.id}>{product.name}</MenuItem>
-              ))}
-            </Select>
-
             <InputLabel htmlFor="quantity" className="modal-label">Quantité</InputLabel>
             <CustomInput name="quantity" value={formData.quantity} onChange={handleChange} required type="number" />
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <CustomButton text="Ajouter" type="submit" disabled={false} />
+              <CustomButton text="Modifier" type="submit" disabled={false} />
             </Box>
           </form>
         </ModalContent>
@@ -140,7 +100,7 @@ const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddSto
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-          Stock ajouté avec succès !
+          Stock modifié avec succès !
         </Alert>
       </Snackbar>
     </>
@@ -211,7 +171,7 @@ const ModalContent = styled('div')(
   `,
 );
 
-export default AddStockModal;
+export default EditStockModal;
 
 const blue = {
   100: '#DAECFF',
