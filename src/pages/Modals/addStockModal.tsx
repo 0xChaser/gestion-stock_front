@@ -15,30 +15,24 @@ interface AddStockModalProps {
   onAddStock: (formData: FormData) => void;
 }
 
-interface Category {
-  id: string;
-  name: string;
-}
-
 interface Product {
   id: string;
   name: string;
   price: number;
-  categories: Category[];
+  categories: string[];
 }
 
 interface FormData {
-  product: Product;
+  product_id: Product["id"];
   quantity: number;
 }
 
 const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddStock }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState<FormData>({ product: { id: '', name: '', price: 0, categories: [] }, quantity: 0 });
+  const [formData, setFormData] = useState<FormData>({ product_id: '', quantity: 0 });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-
 
   const theme = useTheme();
 
@@ -63,16 +57,15 @@ const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddSto
     const selectedId = event.target.value;
     const selectedProduct = products.find(product => product.id === selectedId);
     setSelectedProduct(selectedProduct || null);
-    setFormData(prev => ({ ...prev, product: selectedProduct! }));
+    setFormData(prev => ({ ...prev, product_id: selectedId }));
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsDisabled(true);
 
-
     const newStock = {
-      product: formData.product,
+      product_id: formData.product_id,
       quantity: formData.quantity,
     };
 
@@ -81,7 +74,7 @@ const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddSto
     try {
       const response = await apiConfig.post('/stock/', newStock, {});
       console.log('Réponse de l\'API:', response.data);
-      onAddStock(newStock);
+      onAddStock(response.data);
       setSnackbarOpen(true);
       onClose();
       setTimeout(() => {
