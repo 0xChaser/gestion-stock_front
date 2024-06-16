@@ -74,7 +74,7 @@ const Button = styled(BaseButton)(
 `,
 );
 
-const CustomButton: React.FC<CustomButtonProps> = ({ text, disabled, type, onClick }) => {
+const CustomButton: React.FC<CustomButtonProps> = ({text, disabled, type, onClick }) => {
   return <Button disabled={disabled} type={type} onClick={onClick}>{text}</Button>;
 };
 

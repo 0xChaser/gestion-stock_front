@@ -51,30 +51,47 @@ const ProductList: React.FC = () => {
     },
   }));
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (): Promise<Product[]> => {
     try {
       const response = await apiConfig.get('/product/');
       const sortedProducts = response.data.sort((a: Product, b: Product) => a.name.localeCompare(b.name));
-      setProducts(sortedProducts);
+      return sortedProducts;
     } catch (error) {
       console.error('Problème de récupération', error);
+      throw error;
     }
   };
-
+  
   useEffect(() => {
-    fetchProducts();
+    const getProducts = async () => {
+      try {
+        const fetchedProducts = await fetchProducts();
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Problème de récupération', error);
+      }
+    };
+    getProducts();
   }, []);
 
   const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
+  const closeModal = async() => {
+    setModalIsOpen(false);
+    await fetchProducts().then(fetchedProducts => {
+      setProducts(fetchedProducts);
+    });
+  } 
 
   const openEditModal = (product: Product) => {
     setSelectedProduct(product);
     setEditModalIsOpen(true);
   };
-  const closeEditModal = () => {
+  const closeEditModal = async() => {
     setSelectedProduct(null);
     setEditModalIsOpen(false);
+    await fetchProducts().then(fetchedProducts => {
+      setProducts(fetchedProducts);
+    });
   };
 
   const openDeleteModal = (product: Product) => {
@@ -93,33 +110,14 @@ const ProductList: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-  const addProduct = async (formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {
-    try {
-      const response = await apiConfig.post('/product/', formData);
-      fetchProducts();
-      setSnackbarMessage('Produit ajouté avec succès !');
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Erreur lors de l\'ajout du produit', error);
-    }
-  };
-
-  const editProduct = async (id: string, formData: { name: string; price: number; categories: { id: string; name: string; }[] }) => {
-    try {
-      const response = await apiConfig.patch(`/product/${id}`, formData);
-      fetchProducts();
-      setSnackbarMessage('Produit modifié avec succès !');
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Erreur lors de la modification du produit', error);
-    }
-  };
-
   const deleteProduct = async () => {
     if (selectedProduct === null) return;
     try {
+      console.log('Deleting product with ID:', selectedProduct.id);
       await apiConfig.delete(`/product/${selectedProduct.id}`);
-      fetchProducts();
+      await fetchProducts().then(fetchedProducts => {
+        setProducts(fetchedProducts);
+      });
       closeDeleteModal();
       setSnackbarMessage('Produit supprimé avec succès !');
       setSnackbarOpen(true);
@@ -155,14 +153,23 @@ const ProductList: React.FC = () => {
         <CustomButton text="Ajouter des Produits" onClick={openModal} disabled={false} />
         <ToggleViewButton view={view} handleChange={handleViewChange} />
 
-        <AddProductModal isOpen={modalIsOpen} onClose={closeModal} onAddProduct={addProduct} />
+        <AddProductModal isOpen={modalIsOpen} onClose={closeModal} onAddProduct={async () => {
+          await fetchProducts().then(fetchedProducts => {
+            setProducts(fetchedProducts);
+          });
+        }} />
         {selectedProduct && (
           <EditProductModal
-            isOpen={editModalIsOpen}
-            onClose={closeEditModal}
-            onEditProduct={editProduct}
-            product={selectedProduct}
-          />
+          isOpen={editModalIsOpen}
+          onClose={closeEditModal}
+          onEditProduct={async () => {
+            closeEditModal();
+            await fetchProducts().then(fetchedProducts => {
+              setProducts(fetchedProducts);
+            });
+          }}
+          product={selectedProduct}
+        />
         )}
         <DeleteConfirmationModal
           isOpen={deleteModalIsOpen}

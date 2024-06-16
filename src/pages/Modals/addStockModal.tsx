@@ -37,6 +37,8 @@ const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddSto
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState<FormData>({ product: { id: '', name: '', price: 0, categories: [] }, quantity: 0 });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+
 
   const theme = useTheme();
 
@@ -66,6 +68,8 @@ const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddSto
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsDisabled(true);
+
 
     const newStock = {
       product: formData.product,
@@ -80,6 +84,9 @@ const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddSto
       onAddStock(newStock);
       setSnackbarOpen(true);
       onClose();
+      setTimeout(() => {
+        setIsDisabled(false);
+      }, 10);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Erreur lors de l\'ajout du stock', error.response?.data);
@@ -128,7 +135,7 @@ const AddStockModal: React.FC<AddStockModalProps> = ({ isOpen, onClose, onAddSto
             <CustomInput name="quantity" value={formData.quantity} onChange={handleChange} required type="number" />
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <CustomButton text="Ajouter" type="submit" disabled={false} />
+              <CustomButton text="Ajouter" type="submit" disabled={isDisabled} />
             </Box>
           </form>
         </ModalContent>

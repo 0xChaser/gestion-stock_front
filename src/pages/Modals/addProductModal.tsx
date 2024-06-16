@@ -30,6 +30,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
   const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState<FormData>({ name: '', price: 0, categories: [] });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const theme = useTheme();
 
@@ -61,6 +62,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsDisabled(true);
 
     const newProduct = {
       name: formData.name,
@@ -80,6 +82,9 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
       onAddProduct(newProduct);
       setSnackbarOpen(true);
       onClose();
+      setTimeout(() => {
+        setIsDisabled(false);
+      }, 10);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {  
         console.error('Erreur lors de l\'ajout du produit', error.response?.data);
@@ -132,7 +137,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             </Select>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <CustomButton text="Ajouter" type="submit" disabled={false} />
+              <CustomButton text="Ajouter" type="submit" disabled={isDisabled} />
             </Box>
           </form>
         </ModalContent>

@@ -150,7 +150,7 @@ const Sidebar: React.FC = () => {
             <ListItemIcon>
               <PeopleIcon style={iconStyles} />
             </ListItemIcon>
-            <ListItemText primary="Liste des utilisateurs" />
+            <ListItemText primary="Liste des Utilisateurs" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -158,15 +158,15 @@ const Sidebar: React.FC = () => {
             <ListItemIcon>
               <CategoryIcon style={iconStyles} />
             </ListItemIcon>
-            <ListItemText primary="Liste des catégories" />
+            <ListItemText primary="Liste des Catégories" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton component={Link} to="/products">
+          <ListItemButton component={Link} to="/product">
             <ListItemIcon>
               <ShoppingBagIcon style={iconStyles} />
             </ListItemIcon>
-            <ListItemText primary="Liste des produits" />
+            <ListItemText primary="Liste des Produits" />
           </ListItemButton>
         </ListItem>
       </List>

@@ -8,10 +8,11 @@ import CustomButton from '../../components/buttons/CustomButton';
 import CustomInput from '../../components/inputs/CustomInput';
 import axios from 'axios';
 
+
 interface AddCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddCategory: (formData: FormData) => void;
+ onAddCategory: (formData: FormData) => void;
 }
 
 interface FormData {
@@ -21,6 +22,7 @@ interface FormData {
 const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ isOpen, onClose, onAddCategory }) => {
   const [formData, setFormData] = useState<FormData>({ name: '' });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const theme = useTheme();
 
@@ -31,19 +33,24 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ isOpen, onClose, on
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+      setIsDisabled(true);
 
     const newCategory = {
       name: formData.name,
     };
 
-    console.log(newCategory);
+    console.log(newCategory); 
 
     try {
       const response = await apiConfig.post('/category/', newCategory, {});
+      setIsDisabled(true);
       console.log('Réponse de l\'API:', response.data);
       onAddCategory(newCategory);
       setSnackbarOpen(true);
       onClose();
+      setTimeout(() => {
+        setIsDisabled(false);
+      }, 10);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Erreur lors de l\'ajout de la catégorie', error.response?.data);
@@ -75,7 +82,7 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ isOpen, onClose, on
             <CustomInput name="name" value={formData.name} onChange={handleChange} required />
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <CustomButton text="Ajouter" type="submit" disabled={false} />
+              <CustomButton text="Ajouter" type="submit" disabled={isDisabled}/>
             </Box>
           </form>
         </ModalContent>

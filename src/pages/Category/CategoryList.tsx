@@ -13,10 +13,23 @@ import CustomTitle from '../../components/titles/CustomTitle';
 import ToggleViewButton from '../../components/buttons/ToggleViewButton';
 import CustomTable from '../../components/tables/CustomTable';
 
-interface Category {
+export interface Category {
   id: string;
   name: string;
 }
+
+const fetchCategories = async (): Promise<Category[]> => {
+  try {
+    const response = await apiConfig.get('/category/');
+    const sortedCategories = response.data.sort((a: Category, b: Category) => a.name.localeCompare(b.name));
+    return sortedCategories;
+  } catch (error) {
+    console.error('Problème de récupération', error);
+    throw error;
+  }
+};
+
+export {fetchCategories}; 
 
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -49,18 +62,16 @@ const CategoryList: React.FC = () => {
     },
   }));
 
-  const fetchCategories = async () => {
-    try {
-      const response = await apiConfig.get('/category/');
-      const sortedCategories = response.data.sort((a: Category, b: Category) => a.name.localeCompare(b.name));
-      setCategories(sortedCategories);
-    } catch (error) {
-      console.error('Problème de récupération', error);
-    }
-  };
-
   useEffect(() => {
-    fetchCategories();
+    const getCategories = async () => {
+      try {
+        const fetchedCategories = await fetchCategories();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error('Problème de récupération', error);
+      }
+    };
+    getCategories();
   }, []);
 
   const openModal = () => setModalIsOpen(true);
@@ -70,9 +81,12 @@ const CategoryList: React.FC = () => {
     setSelectedCategory(category);
     setEditModalIsOpen(true);
   };
-  const closeEditModal = () => {
+  const closeEditModal = async() => {
     setSelectedCategory(null);
     setEditModalIsOpen(false);
+    await fetchCategories().then(fetchedCategories => {
+      setCategories(fetchedCategories);
+    });
   };
 
   const openDeleteModal = (category: Category) => {
@@ -91,35 +105,15 @@ const CategoryList: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-  const addCategory = async (formData: { name: string }) => {
-    try {
-      await apiConfig.post('/category/', formData);
-      fetchCategories();
-      setSnackbarMessage('Catégorie ajoutée avec succès !');
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Erreur lors de l\'ajout de la catégorie', error);
-    }
-  };
-
-  const editCategory = async (id: string, formData: { name: string }) => {
-    try {
-      await apiConfig.patch(`/category/${id}`, formData);
-      fetchCategories();
-      setSnackbarMessage('Catégorie modifiée avec succès !');
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Erreur lors de la modification de la catégorie', error);
-    }
-  };
-
   const deleteCategory = async () => {
     if (selectedCategory === null) return;
     try {
       console.log('Deleting category with ID:', selectedCategory.id);
       await apiConfig.delete(`/category/${selectedCategory.id}`);
+      await fetchCategories().then(fetchedCategories => {
+        setCategories(fetchedCategories);
+      });
       closeDeleteModal();
-      fetchCategories(); 
       setSnackbarMessage('Catégorie supprimée avec succès !');
       setSnackbarOpen(true);
     } catch (error) {
@@ -152,14 +146,22 @@ const CategoryList: React.FC = () => {
         <CustomButton text="Ajouter une Catégorie" onClick={openModal} disabled={false} />
         <ToggleViewButton view={view} handleChange={handleViewChange} />
 
-        <AddCategoryModal isOpen={modalIsOpen} onClose={closeModal} onAddCategory={addCategory} />
+        <AddCategoryModal isOpen={modalIsOpen}
+         onClose={closeModal}
+          onAddCategory={async () => {
+            await fetchCategories().then(fetchedCategories => {
+              setCategories(fetchedCategories);
+            });
+          }}
+          />
+
         {selectedCategory && (
           <EditCategoryModal
-            isOpen={editModalIsOpen}
-            onClose={closeEditModal}
-            onEditCategory={editCategory}
-            category={selectedCategory}
-          />
+          isOpen={editModalIsOpen}
+          onClose={closeEditModal}
+          onEditCategory={closeEditModal}
+          category={selectedCategory}
+        />
         )}
         <DeleteConfirmationModal
           isOpen={deleteModalIsOpen}

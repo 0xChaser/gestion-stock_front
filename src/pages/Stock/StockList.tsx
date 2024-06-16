@@ -34,6 +34,18 @@ interface FormData {
   quantity: number;
 }
 
+
+const fetchStocks = async (): Promise<Stock[]> => {
+  try {
+    const response = await apiConfig.get('/stock/');
+    const sortedStocks = response.data.sort((a: Stock, b: Stock) => a.product.name.localeCompare(b.product.name));
+    return sortedStocks;
+  } catch (error) {
+    console.error('Problème de récupération', error);
+    throw error;
+  }
+};
+
 const StockList: React.FC = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -65,29 +77,36 @@ const StockList: React.FC = () => {
     },
   }));
 
-  const fetchStocks = async () => {
-    try {
-      const response = await apiConfig.get('/stock/');
-      setStocks(response.data);
-    } catch (error) {
-      console.error('Problème de récupération', error);
-    }
-  };
-
   useEffect(() => {
-    fetchStocks();
+    const getStocks = async () => {
+      try {
+        const fetchedStocks = await fetchStocks();
+        setStocks(fetchedStocks);
+      } catch (error) {
+        console.error('Problème de récupération', error);
+      }
+    };
+    getStocks();
   }, []);
 
   const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
+  const closeModal = async () => {
+    setModalIsOpen(false);
+    await fetchStocks().then(fetchedStocks => {
+      setStocks(fetchedStocks);
+    });
+  };
 
   const openEditModal = (stock: Stock) => {
     setSelectedStock(stock);
     setEditModalIsOpen(true);
   };
-  const closeEditModal = () => {
+  const closeEditModal = async () => {
     setSelectedStock(null);
     setEditModalIsOpen(false);
+    await fetchStocks().then(fetchedStocks => {
+      setStocks(fetchedStocks);
+    });
   };
 
   const openDeleteModal = (stock: Stock) => {
@@ -132,7 +151,9 @@ const StockList: React.FC = () => {
     if (selectedStock === null) return;
     try {
       await apiConfig.delete(`/stock/${selectedStock.id}`);
-      fetchStocks();
+      await fetchStocks().then(fetchedStocks => {
+        setStocks(fetchedStocks);
+      });
       closeDeleteModal();
       setSnackbarMessage('Stock supprimé avec succès !');
       setSnackbarOpen(true);
@@ -169,12 +190,21 @@ const StockList: React.FC = () => {
         <CustomButton text="Ajouter des Stocks" onClick={openModal} disabled={false} />
         <ToggleViewButton view={view} handleChange={handleViewChange} />
 
-        <AddStockModal isOpen={modalIsOpen} onClose={closeModal} onAddStock={addStock} />
+        <AddStockModal isOpen={modalIsOpen} onClose={closeModal} onAddStock={async () => {
+          await fetchStocks().then(fetchedStocks => {
+            setStocks(fetchedStocks);
+          });
+        }} />
         {selectedStock && (
           <EditStockModal
             isOpen={editModalIsOpen}
             onClose={closeEditModal}
-            onEditStock={editStock}
+            onEditStock={async () => {
+              closeEditModal();
+              await fetchStocks().then(fetchedStocks => {
+                setStocks(fetchedStocks);
+              });
+            }}
             stock={selectedStock}
           />
         )}
