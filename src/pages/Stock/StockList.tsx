@@ -12,6 +12,7 @@ import CustomEditButton from '../../components/buttons/CustomEditButton';
 import CustomTitle from '../../components/titles/CustomTitle';
 import ToggleViewButton from '../../components/buttons/ToggleViewButton';
 import CustomTable from '../../components/tables/CustomTable';
+import SuperuserGuard from '../../guards/SuperuserGuard';
 
 interface Stock {
   id: string;
@@ -186,8 +187,13 @@ const StockList: React.FC = () => {
         gap: 2,
         width: '100%'
       }}>
-        <CustomTitle>Liste des Stocks</CustomTitle>
-        <CustomButton text="Ajouter des Stocks" onClick={openModal} disabled={false} />
+        <CustomTitle>Liste du Stock</CustomTitle>
+        <SuperuserGuard>
+
+          <CustomButton text="Ajouter des Stocks" onClick={openModal} disabled={false} />
+
+        </SuperuserGuard>
+
         <ToggleViewButton view={view} handleChange={handleViewChange} />
 
         <AddStockModal isOpen={modalIsOpen} onClose={closeModal} onAddStock={async () => {

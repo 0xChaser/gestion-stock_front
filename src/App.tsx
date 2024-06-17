@@ -1,7 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/themeContext';
-import { Sidebar, Home, StockList, UserList, Login, CategoryList, ProductList } from './pages';
+import { AuthProvider } from './contexts/AuthContext';
+import { Sidebar, Home, StockList, UserList, CategoryList, ProductList, Login, Logout } from './pages';
+import AuthGuard from '../src/guards/AuthGuard';
+import AdminGuard from '../src/guards/AdminGuard';
 import { useMediaQuery, Toolbar } from '@mui/material';
 
 const drawerWidth = 240;
@@ -11,29 +14,36 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider>
-      <Router>
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
-          <Sidebar />
-          <main
-            style={{
-              flexGrow: 1,
-              marginLeft: isMobile ? 0 : drawerWidth,
-              width: isMobile ? '100%' : `calc(100% - ${drawerWidth}px)`,
-              overflowY: 'auto',
-            }}
-          >
-            {isMobile && <Toolbar />}
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/stock" element={<StockList />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/users" element={<UserList />} />
-              <Route path="/category" element={<CategoryList />} />
-              <Route path="/product" element={<ProductList />} />
-            </Routes>
-          </main>
-        </div>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <div style={{ display: 'flex', minHeight: '100vh' }}>
+            <Sidebar />
+            <main
+              style={{
+                flexGrow: 1,
+                marginLeft: isMobile ? 0 : drawerWidth,
+                width: isMobile ? '100%' : `calc(100% - ${drawerWidth}px)`,
+                overflowY: 'auto',
+              }}
+            >
+              {isMobile && <Toolbar />}
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/logout" element={<Logout />} />
+                <Route element={<AuthGuard />}>
+                  <Route path="/stock" element={<StockList />} />
+                  <Route element={<AdminGuard />}>
+                    <Route path="/users" element={<UserList />} />
+                    <Route path="/category" element={<CategoryList />} />
+                    <Route path="/product" element={<ProductList />} />
+                  </Route>
+                </Route>
+              </Routes>
+            </main>
+          </div>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 };

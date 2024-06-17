@@ -7,6 +7,7 @@ import apiConfig from '../../api/apiConfig';
 import CustomButton from '../../components/buttons/CustomButton';
 import CustomInput from '../../components/inputs/CustomInput';
 import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface EditCategoryModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface FormData {
 const EditCategoryModal: React.FC<EditCategoryModalProps> = ({ isOpen, onClose, onEditCategory, category }) => {
   const [formData, setFormData] = useState<FormData>({ name: category.name });
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const { user } = useAuth(); 
 
   const theme = useTheme();
 
@@ -40,7 +42,11 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({ isOpen, onClose, 
     console.log(updatedCategory);
 
     try {
-      const response = await apiConfig.patch(`/category/${category.id}`, updatedCategory);
+      const response = await apiConfig.patch(`/category/${category.id}`, updatedCategory, {
+        headers: {
+          'Authorization': `Bearer ${user?.access_token}`
+        }
+      });
       console.log('Réponse de l\'API:', response.data);
       onEditCategory(category.id, updatedCategory);
       setSnackbarOpen(true);

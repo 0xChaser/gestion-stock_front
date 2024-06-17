@@ -1,29 +1,22 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/themeContext';
 import { Box, Button, TextField, Typography, Container, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-interface LoginProps {
-  onLoginSuccess?: () => void;
-}
-
-const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+const Login: React.FC = () => {
   const { darkMode } = useTheme();
+  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      const response = await axios.post('/auth/login', { username, password });
-      const { token } = response.data;
-      if (onLoginSuccess) {
-        onLoginSuccess();
-      }else {
-        throw new Error('Token not provided');
-      }
-    } catch (error) {
-      console.error('Error during login', error);
+    const success = await login(username, password);
+    if (success) {
+      navigate('/');
+    } else {
       alert('Incorrect username or password, or API access problem');
     }
   };

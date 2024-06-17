@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CssBaseline, ThemeProvider, createTheme, Box, Grid, Typography, styled, Card, CardContent } from '@mui/material';
+import { CssBaseline, ThemeProvider, createTheme, Box } from '@mui/material';
 import apiConfig from '../../api/apiConfig';
 import AddCategoryModal from '../Modals/addCategoryModal';
 import EditCategoryModal from '../Modals/editCategoryModal';
@@ -10,8 +10,8 @@ import CustomButton from '../../components/buttons/CustomButton';
 import CustomDeleteButton from '../../components/buttons/CustomDeleteButton';
 import CustomEditButton from '../../components/buttons/CustomEditButton';
 import CustomTitle from '../../components/titles/CustomTitle';
-import ToggleViewButton from '../../components/buttons/ToggleViewButton';
 import CustomTable from '../../components/tables/CustomTable';
+import { useAuth } from '../../contexts/AuthContext';
 
 export interface Category {
   id: string;
@@ -29,7 +29,7 @@ const fetchCategories = async (): Promise<Category[]> => {
   }
 };
 
-export {fetchCategories}; 
+export { fetchCategories };
 
 const CategoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -39,28 +39,14 @@ const CategoryList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [view, setView] = useState('module');
   const { darkMode } = useTheme();
+  const { user } = useAuth();
 
   const theme = createTheme({
     palette: {
       mode: darkMode ? 'dark' : 'light',
     },
   });
-
-  const StyledCard = styled(Card)(({ theme }) => ({
-    backgroundColor: darkMode ? '#0a1929' : '#F0F7FF',
-    boxShadow: theme.shadows[3],
-    borderRadius: '8px',
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2),
-    border: darkMode ? '1px solid #2a384e' : '1px solid #66B3FF',
-    color: darkMode ? '#ffffff' : '#303741',
-    '&:hover': {
-      boxShadow: theme.shadows[6],
-      border: '1px solid #3ea6ff',
-    },
-  }));
 
   useEffect(() => {
     const getCategories = async () => {
@@ -81,7 +67,7 @@ const CategoryList: React.FC = () => {
     setSelectedCategory(category);
     setEditModalIsOpen(true);
   };
-  const closeEditModal = async() => {
+  const closeEditModal = async () => {
     setSelectedCategory(null);
     setEditModalIsOpen(false);
     await fetchCategories().then(fetchedCategories => {
@@ -107,9 +93,14 @@ const CategoryList: React.FC = () => {
 
   const deleteCategory = async () => {
     if (selectedCategory === null) return;
+
     try {
       console.log('Deleting category with ID:', selectedCategory.id);
-      await apiConfig.delete(`/category/${selectedCategory.id}`);
+      await apiConfig.delete(`/category/${selectedCategory.id}`, {
+        headers: {
+          'Authorization': `Bearer ${user?.access_token}`
+        }
+      });
       await fetchCategories().then(fetchedCategories => {
         setCategories(fetchedCategories);
       });
@@ -118,12 +109,6 @@ const CategoryList: React.FC = () => {
       setSnackbarOpen(true);
     } catch (error) {
       console.error('Erreur lors de la suppression de la catégorie', error);
-    }
-  };
-
-  const handleViewChange = (event: React.MouseEvent<HTMLElement>, nextView: string) => {
-    if (nextView !== null) {
-      setView(nextView);
     }
   };
 
@@ -144,24 +129,23 @@ const CategoryList: React.FC = () => {
       }}>
         <CustomTitle>Liste des Catégories</CustomTitle>
         <CustomButton text="Ajouter une Catégorie" onClick={openModal} disabled={false} />
-        <ToggleViewButton view={view} handleChange={handleViewChange} />
 
         <AddCategoryModal isOpen={modalIsOpen}
-         onClose={closeModal}
+          onClose={closeModal}
           onAddCategory={async () => {
             await fetchCategories().then(fetchedCategories => {
               setCategories(fetchedCategories);
             });
           }}
-          />
+        />
 
         {selectedCategory && (
           <EditCategoryModal
-          isOpen={editModalIsOpen}
-          onClose={closeEditModal}
-          onEditCategory={closeEditModal}
-          category={selectedCategory}
-        />
+            isOpen={editModalIsOpen}
+            onClose={closeEditModal}
+            onEditCategory={closeEditModal}
+            category={selectedCategory}
+          />
         )}
         <DeleteConfirmationModal
           isOpen={deleteModalIsOpen}
@@ -170,36 +154,14 @@ const CategoryList: React.FC = () => {
           productName={selectedCategory?.name || ''}
         />
 
-        {view === 'module' ? (
-          <Grid container spacing={5}>
-            {categories.map((category) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={category.id}>
-                <StyledCard>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="subtitle1" component="div">
-                        {category.name}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 3 }}>
-                      <CustomEditButton text="Modifier" onClick={() => openEditModal(category)} disabled={false} />
-                      <CustomDeleteButton text="Supprimer" onClick={() => openDeleteModal(category)} disabled={false} />
-                    </Box>
-                  </CardContent>
-                </StyledCard>
-              </Grid>
-            ))}
-          </Grid>
-        ) : (
-          <Box sx={{ width: '100%' }}>
-            <CustomTable
-              columns={columns}
-              data={categories}
-              onEdit={openEditModal}
-              onDelete={openDeleteModal}
-            />
-          </Box>
-        )}
+        <Box sx={{ width: '100%' }}>
+          <CustomTable
+            columns={columns}
+            data={categories}
+            onEdit={openEditModal}
+            onDelete={openDeleteModal}
+          />
+        </Box>
 
         <CustomSnackbar
           open={snackbarOpen}

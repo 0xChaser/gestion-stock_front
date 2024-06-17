@@ -23,13 +23,16 @@ import {
   ChevronRight as ChevronRightIcon,
   Home as HomeIcon,
   Inventory as InventoryIcon,
-  Login as LoginIcon,
+  Logout as LogoutIcon,
   People as PeopleIcon,
   Category as CategoryIcon,
   ShoppingBag as ShoppingBagIcon,
   Menu as MenuIcon,
 } from '@mui/icons-material';
 import { useTheme } from '../../contexts/themeContext';
+import { useAuth } from '../../contexts/AuthContext';
+import SuperuserGuard from '../../guards/SuperuserGuard';
+import CustomLogoutIcon from '../../components/icons/CustomLogoutIcon';
 import logo from '../../assets/images/logo_Estock.png';
 import { styled } from '@mui/material/styles';
 
@@ -91,6 +94,7 @@ const DrawerStyled = styled(Drawer)<DrawerStyledProps>(({ theme, open }) => ({
 
 const Sidebar: React.FC = () => {
   const { darkMode, toggleTheme } = useTheme();
+  const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useMediaQuery('(max-width:600px)');
   const [open, setOpen] = useState(true);
@@ -113,6 +117,8 @@ const Sidebar: React.FC = () => {
       backgroundColor: darkMode ? '#96CD32' : '#1423DC',
     },
   };
+
+  console.log('Sidebar - user:', user);
 
   const drawer = (
     <React.Fragment>
@@ -137,38 +143,42 @@ const Sidebar: React.FC = () => {
             <ListItemText primary="Liste du Stock" />
           </ListItemButton>
         </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/login">
-            <ListItemIcon>
-              <LoginIcon style={iconStyles} />
-            </ListItemIcon>
-            <ListItemText primary="Log In" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/users">
-            <ListItemIcon>
-              <PeopleIcon style={iconStyles} />
-            </ListItemIcon>
-            <ListItemText primary="Liste des Utilisateurs" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/category">
-            <ListItemIcon>
-              <CategoryIcon style={iconStyles} />
-            </ListItemIcon>
-            <ListItemText primary="Liste des Catégories" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} to="/product">
-            <ListItemIcon>
-              <ShoppingBagIcon style={iconStyles} />
-            </ListItemIcon>
-            <ListItemText primary="Liste des Produits" />
-          </ListItemButton>
-        </ListItem>
+        <SuperuserGuard>
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/users">
+              <ListItemIcon>
+                <PeopleIcon style={iconStyles} />
+              </ListItemIcon>
+              <ListItemText primary="Liste des Utilisateurs" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/category">
+              <ListItemIcon>
+                <CategoryIcon style={iconStyles} />
+              </ListItemIcon>
+              <ListItemText primary="Liste des Catégories" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/product">
+              <ListItemIcon>
+                <ShoppingBagIcon style={iconStyles} />
+              </ListItemIcon>
+              <ListItemText primary="Liste des Produits" />
+            </ListItemButton>
+          </ListItem>
+        </SuperuserGuard>
+        {user && (
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/logout">
+              <ListItemIcon>
+              <CustomLogoutIcon iconStyles={iconStyles} />
+              </ListItemIcon>
+              <ListItemText primary="Log Out" />
+            </ListItemButton>
+          </ListItem>
+        )}
       </List>
       <Divider />
       <Box sx={{ p: 2, ...(isMobile && { position: 'absolute', bottom: 0, width: '100%' }) }}>
