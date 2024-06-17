@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       const { access_token } = response.data;
 
-      const userDetailsResponse = await ApiConfig.get('/users/me', {
+      const userDetailsResponse = await ApiConfig.get('/user/me', {
         headers: {
           'Authorization': `Bearer ${access_token}`
         }

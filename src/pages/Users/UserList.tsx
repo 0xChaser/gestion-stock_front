@@ -50,17 +50,7 @@ const UserList: React.FC = () => {
       throw error;
     }
   };
-
-  const deleteUser = async (userId: number) => {
-    try {
-      await apiConfig.delete(`/users/${userId}`);
-      setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
-      console.log('Utilisateur supprimé avec succès');
-    } catch (error) {
-      console.error('Erreur lors de la suppression de l\'utilisateur', error);
-    }
-  };
-
+  <
   const editUser = async (userId: number) => {
     console.log('Modifier l\'utilisateur', userId);
   };
