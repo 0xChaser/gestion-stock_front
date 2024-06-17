@@ -3,12 +3,14 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/themeContext';
 import { Box, Button, TextField, Typography, Container, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import AddUserModal from '../Modals/addUserModal';
 
 const Login: React.FC = () => {
   const { darkMode } = useTheme();
   const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -19,6 +21,14 @@ const Login: React.FC = () => {
     } else {
       alert('Incorrect username or password, or API access problem');
     }
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -48,8 +58,8 @@ const Login: React.FC = () => {
             required
             fullWidth
             id="username"
-            label="Nom d'utilisateur"
-            name="username"
+            label="Adresse Email"
+            name="email"
             autoComplete="username"
             autoFocus
             value={username}
@@ -86,8 +96,28 @@ const Login: React.FC = () => {
           >
             Se connecter
           </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={handleOpenModal}
+            sx={{
+              mt: 2,
+              bgcolor: darkMode ? 'grey.700' : 'grey.300',
+              color: darkMode ? '#ffffff' : '#1423DC',
+              '&:hover': {
+                bgcolor: darkMode ? 'grey.600' : 'grey.200',
+              }
+            }}
+          >
+            Créer un compte
+          </Button>
         </Box>
       </Paper>
+      <AddUserModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onAddUser={() => {}}
+      />
     </Container>
   );
 };
