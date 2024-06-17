@@ -7,15 +7,16 @@ interface Column {
   id: string;
   label: string;
   align?: 'right' | 'left' | 'center' | string | any;
-  format?: (value: any) => string;
+  format?: (value: any, row?: any) => React.ReactNode;
 }
 
 interface CustomTableProps {
   columns: Column[];
   data: any[];
   onEdit: (item: any) => void;
-  onDelete: (item: any) => void;
+  onDelete?: (item: any) => void;
 }
+
 
 const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onEdit, onDelete }) => {
   return (
@@ -46,9 +47,15 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onEdit, onDele
                 );
               })}
               <TableCell align="center">
-                <Box sx={{ display: 'flex', justifyContent: 'space-evenly', flexDirection:'row' }}>
-                      <CustomEditButton text="Modifier" onClick={() => onEdit(row)} disabled={false} />
-                      <CustomDeleteButton text="Supprimer" onClick={() => onDelete(row)} disabled={false}/>
+                <Box sx={{ display: 'flex', justifyContent: 'space-evenly', flexDirection: 'row' }}>
+                  <CustomEditButton text="Modifier" onClick={() => onEdit(row)} disabled={false} />
+                  {onDelete && (
+                    <CustomDeleteButton
+                      text="Supprimer"
+                      onClick={() => onDelete && onDelete(row)}
+                      disabled={false}
+                    />
+                  )}
                 </Box>
               </TableCell>
             </TableRow>

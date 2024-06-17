@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { Input as BaseInput } from '@mui/base/Input';
+import { TextField, Checkbox } from '@mui/material';
 import { styled } from '@mui/system';
 
 interface CustomInputProps {
-  placeholder?: string;
-  name?: string;
-  label?: string;
+  name: string;
+  value?: string | number;
+  checked?: boolean;
   type?: string;
-  value?: number | string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
 }
-
 const InputElement = styled('input')(
   ({ theme }) => `
   width: 320px;
@@ -42,14 +41,17 @@ const InputElement = styled('input')(
 `,
 );
 
-const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(function CustomInput(
-  { placeholder, name, label, value, onChange, type, ...props },
-  ref,
-) {
-  return <BaseInput slots={{ input: InputElement }} {...props} ref={ref} placeholder={placeholder} name={name} value={value} onChange={onChange} type={type} />;
-});
+
+
+const CustomInput: React.FC<CustomInputProps> = ({ name, value, checked, type, onChange, required }) => {
+  if (type === 'checkbox') {
+    return <Checkbox name={name} checked={checked} onChange={onChange} />;
+  }
+  return <TextField name={name} value={value} type={type} onChange={onChange} required={required} />;
+};
 
 export default CustomInput;
+
 
 const blue = {
   100: '#DAECFF',
