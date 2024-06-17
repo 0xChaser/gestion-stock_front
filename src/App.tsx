@@ -1,10 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/themeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { Sidebar, Home, StockList, UserList, CategoryList, ProductList, Login, Logout } from './pages';
-import AuthGuard from '../src/guards/AuthGuard';
-import AdminGuard from '../src/guards/AdminGuard';
+import AuthGuard from './guards/AuthGuard';
+import AdminGuard from './guards/AdminGuard';
 import { useMediaQuery, Toolbar } from '@mui/material';
 
 const drawerWidth = 240;

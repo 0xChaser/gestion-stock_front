@@ -118,8 +118,6 @@ const Sidebar: React.FC = () => {
     },
   };
 
-  console.log('Sidebar - user:', user);
-
   const drawer = (
     <React.Fragment>
       <Box sx={{ width: '100%', p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
