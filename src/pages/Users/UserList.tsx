@@ -87,14 +87,6 @@ const UserList: React.FC = () => {
   const columns = [
     { id: 'email', label: 'Email' },
     { id: 'is_superuser', label: 'Role', align: 'right', format: (value: boolean) => value ? 'Administrateur' : 'Utilisateur' },
-    {
-      id: 'actions',
-      label: 'Actions',
-      align: 'right',
-      format: (_: any, user: User) => (
-        <CustomButton text="Modifier" onClick={() => openModal(user)} />
-      ),
-    },
   ];
 
   return (

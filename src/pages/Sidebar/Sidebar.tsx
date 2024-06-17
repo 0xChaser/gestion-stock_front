@@ -143,6 +143,16 @@ const Sidebar: React.FC = () => {
             <ListItemText primary="Liste du Stock" />
           </ListItemButton>
         </ListItem>
+        {!user && (
+        <ListItem disablePadding>
+            <ListItemButton component={Link} to="/login">
+              <ListItemIcon>
+              <CustomLogoutIcon iconStyles={iconStyles} />
+              </ListItemIcon>
+              <ListItemText primary="Log In" />
+            </ListItemButton>
+          </ListItem>
+        )}
         <SuperuserGuard>
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/users">

@@ -43,7 +43,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onEditUs
     if (user) {
       setFormData({
         email: user.email,
-        password: '',
+        // password: '',
         is_superuser: user.is_superuser,
       });
     }
@@ -66,7 +66,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onEditUs
 
     const updatedUser = {
       email: formData.email,
-      password: formData.password || undefined,
+      // password: formData.password || undefined,
       is_active: user.is_active,
       is_superuser: formData.is_superuser,
       is_verified: user.is_verified,
@@ -112,8 +112,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onEditUs
             <InputLabel htmlFor="email" className="modal-label">Email</InputLabel>
             <CustomInput name="email" value={formData.email} onChange={handleChange} required />
 
-            <InputLabel htmlFor="password" className="modal-label">Mot de passe</InputLabel>
-            <CustomInput name="password" type="password" value={formData.password} onChange={handleChange} />
+            {/* <InputLabel htmlFor="password" className="modal-label">Mot de passe</InputLabel>
+            <CustomInput name="password" type="password" value={formData.password} onChange={handleChange} /> */}
 
             <InputLabel htmlFor="is_superuser" className="modal-label">Superuser</InputLabel>
             <CustomInput name="is_superuser" type="checkbox" checked={formData.is_superuser} onChange={handleChange} />
