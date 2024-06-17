@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
         <CustomTitle>
           Bienvenue sur E-Stock!
         </CustomTitle>
-        <img src={StockImage} alt="Stock" style={{ minWidth: '45%', width:'100%', maxWidth:'850px', height: 'auto' }} />
+        <img src={StockImage} alt="Stock" style={{ minWidth: '45%', width:'100%', maxWidth:'700px', height: 'auto' }} />
         <Box sx={{ marginTop: 3, display: 'flex', alignItems:'center', justifyContent:'space-evenly'}}>
 
           <Button component={Link} to="/stock" variant="contained" color="primary">
