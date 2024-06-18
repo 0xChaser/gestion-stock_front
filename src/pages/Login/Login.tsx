@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/themeContext';
-import { Box, Button, TextField, Typography, Container, Paper } from '@mui/material';
+import { Box, Button, TextField, Typography, Container, Paper, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import AddUserModal from '../Modals/addUserModal';
 
@@ -96,7 +96,7 @@ const Login: React.FC = () => {
           >
             Se connecter
           </Button>
-          <Button
+          {/* <Button
             fullWidth
             variant="outlined"
             onClick={handleOpenModal}
@@ -110,7 +110,7 @@ const Login: React.FC = () => {
             }}
           >
             Créer un compte
-          </Button>
+          </Button> */}
         </Box>
       </Paper>
       <AddUserModal
@@ -118,6 +118,44 @@ const Login: React.FC = () => {
         onClose={handleCloseModal}
         onAddUser={() => {}}
       />
+      <Paper elevation={darkMode ? 3 : 1} sx={{
+        padding: 4,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        backgroundColor: darkMode ? 'grey.800' : 'grey.100',
+        color: darkMode ? '#ffffff' : '#1423DC',
+        width: '100%',
+        marginTop: 4,
+      }}>
+        <Typography component="h2" variant="h6" sx={{ marginBottom: 2 }}>
+          Compte de test pour Gestion de Stock
+        </Typography>
+        <Grid container spacing={2} sx={{ width: '100%' }}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+              Administrateur :
+            </Typography>
+            <Typography variant="body2" sx={{ marginBottom: 1 }}>
+              Login: agent1@enedis.fr
+            </Typography>
+            <Typography variant="body2" sx={{ marginBottom: 1 }}>
+              MDP: Enedis2024@
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+              Utilisateur :
+            </Typography>
+            <Typography variant="body2" sx={{ marginBottom: 1 }}>
+              Login: agent2@enedis.fr
+            </Typography>
+            <Typography variant="body2" sx={{ marginBottom: 1 }}>
+              MDP: Enedis2024@
+            </Typography>
+          </Grid>
+        </Grid>
+      </Paper>
     </Container>
   );
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
 import CustomEditButton from '../../components/buttons/CustomEditButton';
 import CustomDeleteButton from '../../components/buttons/CustomDeleteButton';
+import SuperuserGuard from '../../guards/SuperuserGuard';
 
 interface Column {
   id: string;
@@ -32,7 +33,13 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onEdit, onDele
                 {column.label}
               </TableCell>
             ))}
+
+            <SuperuserGuard>
+
             <TableCell align="center">Actions</TableCell>
+
+            </SuperuserGuard>
+
           </TableRow>
         </TableHead>
         <TableBody>
@@ -46,6 +53,9 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onEdit, onDele
                   </TableCell>
                 );
               })}
+
+              <SuperuserGuard>
+
               <TableCell align="center">
                 <Box sx={{ display: 'flex', justifyContent: 'space-evenly', flexDirection: 'row' }}>
                   <CustomEditButton text="Modifier" onClick={() => onEdit(row)} disabled={false} />
@@ -58,6 +68,9 @@ const CustomTable: React.FC<CustomTableProps> = ({ columns, data, onEdit, onDele
                   )}
                 </Box>
               </TableCell>
+
+              </SuperuserGuard>
+
             </TableRow>
           ))}
         </TableBody>

@@ -13,6 +13,7 @@ import CustomTitle from '../../components/titles/CustomTitle';
 import ToggleViewButton from '../../components/buttons/ToggleViewButton';
 import CustomTable from '../../components/tables/CustomTable';
 import SuperuserGuard from '../../guards/SuperuserGuard';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface Stock {
   id: string;
@@ -34,7 +35,12 @@ interface FormData {
   };
   quantity: number;
 }
-
+interface Column {
+  id: string;
+  label: string;
+  align?: 'right' | 'left' | 'center';
+  format?: (value: any) => string;
+}
 
 const fetchStocks = async (): Promise<Stock[]> => {
   try {
@@ -57,6 +63,7 @@ const StockList: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [view, setView] = useState('module');
   const { darkMode } = useTheme();
+  const { user } = useAuth();
 
   const theme = createTheme({
     palette: {
@@ -169,13 +176,24 @@ const StockList: React.FC = () => {
     }
   };
 
-  const columns = [
+  const columns: Column[] = [
     { id: 'product.name', label: 'Nom du Produit' },
     { id: 'quantity', label: 'Quantité', align: 'right' },
     { id: 'product.price', label: 'Prix (en €)', align: 'right' },
-    { id: 'product.categories', label: 'Catégories', align: 'right', format: (value: any) => Array.isArray(value) ? value.map((category: any) => category.name).join(', ') : 'Pas de catégorie' }
   ];
 
+  if (user?.is_superuser) {
+    columns.push({
+      id: 'product.categories',
+      label: 'Catégories',
+      align: 'right',
+      format: (value: any) =>
+        Array.isArray(value)
+          ? value.map((category: any) => category.name).join(', ')
+          : 'Pas de catégorie',
+    });
+  }
+  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -241,10 +259,17 @@ const StockList: React.FC = () => {
                     <Typography variant="body2" sx={{ mt: 2 }}>
                       Prix: {stock.product.price} €
                     </Typography>
+                    
+                    <SuperuserGuard>
+
                     <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 3 }}>
                       <CustomEditButton text="Modifier" onClick={() => openEditModal(stock)} disabled={false} />
                       <CustomDeleteButton text="Supprimer" onClick={() => openDeleteModal(stock)} disabled={false} />
                     </Box>
+                    
+                    </SuperuserGuard>
+
+
                   </CardContent>
                 </StyledCard>
               </Grid>
