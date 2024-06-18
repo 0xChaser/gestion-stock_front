@@ -38,8 +38,14 @@ possibilité de gérer les utilisateurs, les produits, les catégories et le sto
 
 ## Langages
 
-Le développement du site a été réalisé avec l’aide de différents langages, principalement React JS
-avec Electron et MUI components pour le frontend que vous trouverez dans cette repositorie.
+- React JS
+- TypeScript
+- JavaScript
+- MUI Components
+
+Pour rendre l'application éxécutable en tant que Client Lourd, j'ai utilisé le framework `Electron`.
+
+# Back-End
 
 Concernant le back-end de l'application, la repositorie est disponible ici :
 
