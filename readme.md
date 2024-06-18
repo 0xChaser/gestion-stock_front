@@ -49,6 +49,6 @@ Pour rendre l'application éxécutable en tant que Client Lourd, j'ai utilisé l
 
 # Back-End
 
-Concernant le back-end de l'application, la repositorie est disponible ici :
+Concernant le back-end de l'application, la repo est disponible ici :
 
 https://github.com/0xChaser/gestion-stock_back
