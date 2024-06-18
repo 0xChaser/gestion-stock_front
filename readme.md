@@ -18,7 +18,9 @@ Cette commande permet de créer un éxecutable windows de l'application, cela n�
 
 ### `npm run package-mac` `npm run package-win`
 
-Ces deux commandes permettent de créer un éxecutable de l'application à l'aide d'Electron Packager
+Ces deux commandes permettent de créer un éxecutable de l'application à l'aide d'Electron Packager pour Windows ou pour MacOs.
+
+Attention : L'application pour MacOs est très lourde, privilégier l'utilisation de `npm run package-win`
 
 
 # Contexte 
