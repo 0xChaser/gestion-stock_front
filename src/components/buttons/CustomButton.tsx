@@ -7,6 +7,8 @@ interface CustomButtonProps {
   disabled?: boolean;
   type?: 'submit' | 'button' | 'reset';
   onClick?: () => void;
+  href?: string;
+  download ?: true | false;
 }
 
 const blue = {
