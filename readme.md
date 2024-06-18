@@ -1,4 +1,4 @@
-# Gestion de Stock - Client Lourd E5 BTS SIO
+# Gestion de Stock - E5 Client lourd - Back-End
 
 Dans le répertoire du projet, vous pouvez exécuter les commandes suivantes :
 
