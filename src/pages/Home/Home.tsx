@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
       <CssBaseline />
       <Box sx={{ textAlign: 'center', padding: 3 }}>
         <CustomTitle>
-          Bienvenue sur E-Stock!
+          Bienvenue sur E-Stock !
         </CustomTitle>
         <img src={StockImage} alt="Stock" style={{ minWidth: '45%', width:'100%', maxWidth:'700px', height: 'auto' }} />
         <Box sx={{ marginTop: 3, display: 'flex', alignItems:'center', justifyContent:'space-evenly'}}>
