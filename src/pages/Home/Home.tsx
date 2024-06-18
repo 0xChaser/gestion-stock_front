@@ -24,15 +24,12 @@ const HomePage: React.FC = () => {
         <CustomTitle>
           Bienvenue sur E-Stock !
         </CustomTitle>
+        
         <Typography variant="body1" sx={{ marginTop: 2 }}>
           Vous trouverez ci-desssous un bouton vous redirigeant sur le lien de téléchargement du client Lourd (Version Windows Uniquement).<br />
           Sinon, vous pouvez accéder à la version web depuis la sidebar</Typography>
 
-        <img src={StockImage} alt="Stock" style={{ minWidth: '35%', width:'100%', maxWidth:'650px', height: 'auto', marginTop: '-50px' }} />
-
-        </Box>
-
-        <Box sx={{ marginTop: -10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Button 
             href="https://drive.google.com/uc?id=1TYr3WNeC73p1dmSsvWq06cabi4SlB51H" 
             variant="contained"
@@ -50,6 +47,12 @@ const HomePage: React.FC = () => {
             Télécharger le Client Lourd
           </Button>
        </Box> 
+
+        <img src={StockImage} alt="Stock" style={{ minWidth: '35%', width:'100%', maxWidth:'650px', height: 'auto', marginTop: '-50px' }} />
+
+        </Box>
+
+
     </ThemeProvider>
   );
 };
