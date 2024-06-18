@@ -1,4 +1,4 @@
-# Gestion de Stock - E5 Client lourd - Back-End
+# Gestion de Stock - E5 Client lourd - Front-End
 
 Dans le répertoire du projet, vous pouvez exécuter les commandes suivantes :
 
