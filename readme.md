@@ -14,4 +14,33 @@ Cela regroupe correctement React en mode production et optimise la construction 
 
 ### `npm run dist`
 
-Cette commande permet de créer une distribution de l'application. Cela signifie qu'elle va créer une version de l'application prête à être déployée sur un serveur. Cette version contiendra tous les fichiers nécessaires à l'exécution de l'application, y compris les dépendances et les fichiers de configuration.
+Cette commande permet de créer un éxecutable windows de l'application, cela nécessite l'éxecution préalable de la commande `npm run build`
+
+### `npm run package-mac` `npm run package-win`
+
+Ces deux commandes permettent de créer un éxecutable de l'application à l'aide d'Electron Packager
+
+
+# Contexte 
+
+Dans le cadre d'une augmentation de la perte de matériel informatiques des agents au sein de mon service, il m’a été demandé de réaliser une application permettant la gestion du stock de matériel.
+
+## Spécificités
+
+- Premièrement, l'application doit être accessible par n’importe quel agent afin de savoir le
+matériel disponible.
+
+- Deuxièmement, l'application sera développée à l’aide d’un Framework avec une API
+permettant la relation à la base de données.
+
+- Enfin, elle offrira une interface d'administration restreinte à certains utilisateurs avec la
+possibilité de gérer les utilisateurs, les produits, les catégories et le stock.
+
+## Langages
+
+Le développement du site a été réalisé avec l’aide de différents langages, principalement React JS
+avec Electron et MUI components pour le frontend que vous trouverez dans cette repositorie.
+
+Concernant le back-end de l'application, la repositorie est disponible ici :
+
+https://github.com/0xChaser/gestion-stock_back
